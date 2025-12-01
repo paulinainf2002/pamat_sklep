@@ -120,7 +120,9 @@
 
         <div class="product-image">
             @if($product->image)
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                <!-- <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"> -->
+                     <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" />
+
             @endif
         </div>
 
