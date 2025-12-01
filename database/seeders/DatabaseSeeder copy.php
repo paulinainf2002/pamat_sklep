@@ -1,11 +1,10 @@
-<?php
+<!-- <?php
 
 namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,19 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // przykładowy użytkownik Breeze
+        // User::factory(10)->create();
+
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
-
-        // tu tworzymy admina do Filament
-        User::firstOrCreate(
-            ['email' => 'admin@sklep.pl'],
-            [
-                'name' => 'Admin',
-                'password' => Hash::make('haslo123'),
-            ]
-        );
     }
-}
+} -->
