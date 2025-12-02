@@ -15,9 +15,9 @@ body {
     padding: 0;
 
         /* GLOBAL PATTERN — nieruchomy, nieprzesuwający się */
-    background-image: url('/images/pattern_background.png');
+    background-image: url('/images/pattern.png');
     background-repeat: repeat;
-    background-size: 1200px;
+    background-size: 2300px;
     background-position: top center;
 
     color: #111827;
@@ -911,9 +911,10 @@ select:focus {
     font-weight: 600;
     color: white;
     transition: 0.2s;
-    font-size: 0.9rem;
+    font-size: 1rem;
      display: flex;
     align-items: center;
+    justify-content: center;
 
 
 }
@@ -934,13 +935,14 @@ select:focus {
     color: white;
     cursor: pointer;
     transition: 0.2s;
-        font-size: 0.9rem;
-     display: flex;
+    font-size: 1rem;
+    display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .btn-add:hover {
-    background: #2f3e15;
+    background: #be9343;
 }
  /* .product-grid {
     display: grid;
@@ -1393,7 +1395,7 @@ select:focus {
 
 .contact-wrapper {
     display: flex;
-    gap: 4rem;
+    gap: 3rem;
     align-items: flex-start;
     flex-wrap: wrap;
 }
@@ -1435,7 +1437,7 @@ select:focus {
 .contact-details a,
 .contact-details2 a {
     color: #3E4E20;
-    font-weight: 600;
+    /* font-weight: 600; */
 }
 
 /* SOCIAL MEDIA */
@@ -1717,16 +1719,23 @@ select:focus {
    STRONA PRODUKTU
    =========================== */
 
-.product-page {
+/* .product-page {
     padding: 3rem 0;
-}
+} */
 
 .back-btn {
     display: inline-block;
     margin-bottom: 1.5rem;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     color: #3E4E20;
 }
+
+.arrow-text{
+    font-size: 1.5rem;
+    padding: 1.1rem;
+    display: inline-flex;
+}
+
 
 .product-wrapper {
     display: flex;
@@ -2243,11 +2252,13 @@ select:focus {
     max-width: 1400px;
     background: #fff;
     border-radius: 14px;
-    padding: 4rem;
+    padding: 3rem;
     width: 100%;
 
-box-shadow: 0 30px 40px rgba(0,0,0,.5);
+box-shadow: 0 30px 40px rgba(151, 151, 151, 0.5);
 }
+
+
 
 /*****************************************
  ABSOLUTNA NAPRAWA STRONY KATEGORII
@@ -2294,7 +2305,7 @@ box-shadow: 0 30px 40px rgba(0,0,0,.5);
     flex: 1 !important;
     width: auto !important;
     display: block;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
 }
 
 /* — 4. GRID PRODUKTÓW — */

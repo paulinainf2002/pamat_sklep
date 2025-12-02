@@ -7,7 +7,8 @@
 <div class="product-page container">
 
     {{-- PRZYCISK WSTECZ --}}
-    <a href="{{ url()->previous() }}" class="back-btn">← Wróć</a>
+        <a href="{{ url()->previous() }}" class="arrow-text">
+                    <img src="{{ asset('images/arrow-back.svg') }}" alt="Wróć" class="arrow-icon"> Wróć </a>
 
     <div class="product-wrapper">
 

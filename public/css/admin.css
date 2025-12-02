@@ -1,0 +1,12 @@
+.filament-sidebar {
+    background: #fdfaf3 !important;
+}
+
+.fi-sidebar-item-label {
+    color: #3E4E20 !important;
+}
+
+.fi-sidebar-item a:hover {
+    background: #D4A24C22 !important;
+    border-radius: 8px !important;
+}
