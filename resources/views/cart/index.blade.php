@@ -52,7 +52,7 @@
             <div class="cart-item">
 
                 <div class="cart-thumb">
-                    <img src="{{ Storage::url($product->image) }}" alt="">
+                    <img src="{{ Storage::url($item['image']) }}" alt="">
                 </div>
 
                 <div class="cart-info">
