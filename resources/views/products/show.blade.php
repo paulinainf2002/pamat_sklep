@@ -15,19 +15,19 @@
         <div class="left-col">
 
             <!-- <div class="product-image-big">
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
             </div> -->
             <!-- <div class="product-gallery">
 
                 {{-- Główne zdjęcie --}}
                 <div class="product-image-big">
-                    <img id="mainImage" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                    <img id="mainImage" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
                 </div>
 
                 {{-- Miniaturki --}}
                 <div class="product-thumbs">
-                    <img onclick="changeImage('{{ asset('storage/' . $product->image) }}')"
-                        src="{{ asset('storage/' . $product->image) }}"
+                    <img onclick="changeImage('{{ Storage::url($product->image) }}')"
+                        src="{{ Storage::url($product->image) }}"
                         class="thumb">
 
                     @if($product->image2)
@@ -45,7 +45,7 @@
         <button class="gallery-arrow left" onclick="prevImage()">❮</button>
 
         <img id="galleryMain"
-             src="{{ asset('storage/' . $product->image) }}"
+             src="{{ Storage::url($product->image) }}"
              class="gallery-main">
 
         <button class="gallery-arrow right" onclick="nextImage()">❯</button>
@@ -54,7 +54,7 @@
     {{-- MINIATURKI --}}
     <div class="gallery-thumbs">
 
-        <img src="{{ asset('storage/' . $product->image) }}"
+        <img src="{{ Storage::url($product->image) }}"
              class="thumb active-thumb"
              onclick="setImage(0)">
 
@@ -71,7 +71,7 @@
 <script>
     // lista zdjęć
     const galleryImages = [
-        "{{ asset('storage/' . $product->image) }}",
+        "{{ Storage::url($product->image) }}",
         @if($product->image2)
             "{{ asset('storage/' . $product->image2) }}",
         @endif
