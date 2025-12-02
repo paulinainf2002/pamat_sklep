@@ -27,8 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
-            ->csrf() // ⭐⭐ KLUCZOWE DLA LARAVEL CLOUD ⭐⭐
+            ->login() // login page is HERE. Do not remove.
 
             ->colors([
                 'primary' => Color::Amber,
