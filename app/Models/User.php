@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -47,10 +48,14 @@ class User extends Authenticatable
     }
 
     /**
-     * REQUIRED BY FILAMENT 4 → Without this you get 403 after login
+     * Filament 4: decyduje, czy user ma dostęp do panelu.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true; // allow this user to use the admin panel
+        // WERSJA NA PROBE – wpuszcza każdego zalogowanego usera:
+        // return true;
+
+        // Jak już potwierdzimy, że działa, możesz użyć:
+        return (bool) $this->is_admin;
     }
 }
