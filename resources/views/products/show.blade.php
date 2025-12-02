@@ -73,7 +73,7 @@
     const galleryImages = [
         "{{ Storage::url($product->image) }}",
         @if($product->image2)
-            "{{ asset('storage/' . $product->image2) }}",
+            "{{ Storage::url($product->image2) }}",
         @endif
     ];
 
