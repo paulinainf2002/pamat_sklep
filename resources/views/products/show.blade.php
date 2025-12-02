@@ -59,7 +59,7 @@
              onclick="setImage(0)">
 
         @if($product->image2)
-            <img src="{{ asset('storage/' . $product->image2) }}"
+            <img src="{{ Storage::url($product->image2) }}"
                  class="thumb"
                  onclick="setImage(1)">
         @endif
