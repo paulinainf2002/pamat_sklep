@@ -106,7 +106,7 @@ use App\Http\Controllers\CheckoutController;
 Route::post('/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.coupon');
 Route::post('/update-shipping', [CheckoutController::class, 'updateShipping'])->name('checkout.shipping');
 Route::post('/update-payment', [CheckoutController::class, 'updatePayment'])->name('checkout.payment');
-Route::get('/checkout-summary', [CheckoutController::class, 'summary'])->name('checkout.summary');
+// Route::get('/checkout-summary', [CheckoutController::class, 'summary'])->name('checkout.summary');
 
 Route::post('/accept-cookies', function () {
     return back()->cookie('cookies_accepted', true, 60*24*365);
@@ -114,11 +114,22 @@ Route::post('/accept-cookies', function () {
 
 
 Route::get('/checkout', [CheckoutController::class, 'summary'])->name('checkout.summary');
-Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
+// Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 
 Route::post('/checkout/update-field', [CheckoutController::class, 'updateField'])
     ->name('checkout.updateField');
 
     Route::post('/checkout/shipping/point', [CheckoutController::class, 'saveLocker'])
+    ->name('checkout.shipping.point');
+
+    // Podsumowanie zamówienia
+Route::get('/checkout/summary', [CheckoutController::class, 'summary'])
+    ->name('checkout.summary');
+
+// Złożenie zamówienia
+Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])
+    ->name('checkout.placeOrder');
+
+    Route::post('/checkout/save-locker', [CheckoutController::class, 'saveLocker'])
     ->name('checkout.shipping.point');

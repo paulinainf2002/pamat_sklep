@@ -8,12 +8,15 @@ use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
 {
+    /**
+     * STRONA PODSUMOWANIA (czyta dane z sesji + koszyk)
+     */
     public function summary()
     {
         $cart = session('cart', []);
 
         if (empty($cart)) {
-            return redirect()->route('cart')->with('error', 'Koszyk jest pusty!');
+            return redirect()->route('cart.index')->with('error', 'Koszyk jest pusty!');
         }
 
         $total = array_sum(array_column($cart, 'price'));
@@ -24,106 +27,100 @@ class CheckoutController extends Controller
         ]);
     }
 
+    /**
+     * ZŁOŻENIE ZAMÓWIENIA – WSZYSTKO Z SESJI, NIE Z REQUESTU
+     */
     public function placeOrder(Request $request)
     {
         $cart = session('cart', []);
 
         if (empty($cart)) {
-            return redirect()->route('cart')->with('error', 'Koszyk jest pusty!');
+            return redirect()->route('cart.index')->with('error', 'Koszyk jest pusty!');
         }
 
-        //
-        // --------------------------
-        // Walidacja podstawowa
-        // --------------------------
-        //
-        $request->validate([
-            'name'            => 'required|string|max:255',
-            'email'           => 'required|email',
-            'phone'           => 'required|string|max:20',
+        // Dane klienta z sesji (zapisywane przez updateField())
+        $name        = session('checkout_name');
+        $email       = session('checkout_email');
+        $phone       = session('checkout_phone');
 
-            'delivery_method' => 'required|in:inpost,kurier',
-            'payment_method'  => 'required|in:p24,transfer',
-        ]);
+        $address     = session('checkout_address');
+        $city        = session('checkout_city');
+        $postalCode  = session('checkout_postal_code');
 
-        //
-        // --------------------------
-        // Walidacja zależna od dostawy
-        // --------------------------
-        //
+        $deliveryMethod = session('checkout_delivery_method', 'inpost');   // inpost / kurier
+        $paymentMethod  = session('checkout_payment_method', 'p24');       // p24 / transfer
 
-        // 1) PACZKOMAT INPOST → musi być wybrany punkt
-        if ($request->delivery_method === 'inpost') {
-            $request->validate([
-                'delivery_point' => 'required|string|max:255',
-            ]);
+        $lockerPoint    = session('inpost_point'); // zapisane w saveLocker()
 
-            $shippingPrice = 11.99;
+        // ------------------ Walidacja "ręczna" na podstawie sesji ------------------
+
+        if (!$name || !$email || !$phone) {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Uzupełnij dane klienta (imię, e-mail, telefon).');
+        }
+
+        if ($deliveryMethod === 'inpost') {
+            if (!$lockerPoint) {
+                return redirect()
+                    ->route('cart.index')
+                    ->with('error', 'Wybierz paczkomat InPost.');
+            }
+            $shippingPrice   = 11.99;
             $deliveryAddress = null;
+            $deliveryPoint   = $lockerPoint;
+        } elseif ($deliveryMethod === 'kurier') {
+            if (!$address || !$city || !$postalCode) {
+                return redirect()
+                    ->route('cart.index')
+                    ->with('error', 'Uzupełnij adres dostawy dla kuriera.');
+            }
+            $shippingPrice   = 14.99;
+            $deliveryAddress = $address . ', ' . $postalCode . ' ' . $city;
+            $deliveryPoint   = null;
+        } else {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Nieprawidłowa metoda dostawy.');
         }
 
-        // 2) KURIER → musi być pełny adres
-        if ($request->delivery_method === 'kurier') {
-            $request->validate([
-                'address'     => 'required|string|max:255',
-                'city'        => 'required|string|max:255',
-                'postal_code' => 'required|string|max:20',
-            ]);
-
-            $shippingPrice = 14.99;
-            $deliveryAddress = $request->address . ', ' . $request->postal_code . ' ' . $request->city;
+        if (!in_array($paymentMethod, ['p24', 'transfer'])) {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Nieprawidłowa metoda płatności.');
         }
 
-        //
-        // --------------------------
-        // Sumowanie koszyka
-        // --------------------------
-        //
+        // ------------------ Suma koszyka ------------------
         $productsTotal = array_sum(array_column($cart, 'price'));
-        $finalTotal = $productsTotal + $shippingPrice;
+        $finalTotal    = $productsTotal + $shippingPrice;
 
-        //
-        // --------------------------
-        // Generowanie numeru zamówienia
-        // --------------------------
-        //
+        // ------------------ Numer zamówienia ------------------
         $orderNumber = 'PMT-' . now()->format('Y') . '-' . str_pad(Order::count() + 1, 4, '0', STR_PAD_LEFT);
 
-        //
-        // --------------------------
-        // Tworzenie zamówienia
-        // --------------------------
-        //
+        // ------------------ Tworzenie zamówienia ------------------
         $order = Order::create([
-            'order_number'      => $orderNumber,
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'phone'             => $request->phone,
+            'order_number'     => $orderNumber,
+            'name'             => $name,
+            'email'            => $email,
+            'phone'            => $phone,
 
-            // podstawowy adres (tylko dla kuriera – InPost nie potrzebuje)
-            'address'           => $request->address ?? null,
-            'city'              => $request->city ?? null,
-            'postal_code'       => $request->postal_code ?? null,
+            'address'          => $deliveryMethod === 'kurier' ? $address : null,
+            'city'             => $deliveryMethod === 'kurier' ? $city : null,
+            'postal_code'      => $deliveryMethod === 'kurier' ? $postalCode : null,
 
-            'total'             => $finalTotal,
-            'status'            => 'pending',
+            'delivery_method'  => $deliveryMethod,
+            'delivery_point'   => $deliveryPoint,
+            'delivery_address' => $deliveryAddress,
+            'shipping_price'   => $shippingPrice,
 
-            // DOSTAWA
-            'delivery_method'   => $request->delivery_method,
-            'delivery_point'    => $request->delivery_point ?? null,
-            'delivery_address'  => $deliveryAddress,
-            'shipping_price'    => $shippingPrice,
+            'payment_method'   => $paymentMethod,
+            'payment_status'   => 'pending',
 
-            // PŁATNOŚĆ
-            'payment_method'    => $request->payment_method,
-            'payment_status'    => 'pending', // zaktualizuje P24 callback
+            'total'            => $finalTotal,
+            'status'           => 'pending',
         ]);
 
-        //
-        // --------------------------
-        // Zapis pozycji zamówienia
-        // --------------------------
-        //
+        // ------------------ Pozycje zamówienia ------------------
         foreach ($cart as $item) {
             OrderItem::create([
                 'order_id'   => $order->id,
@@ -133,72 +130,80 @@ class CheckoutController extends Controller
             ]);
         }
 
-        //
-        // --------------------------
-        // Wyczyszczenie koszyka
-        // --------------------------
-        //
+        // ------------------ Czyszczenie koszyka ------------------
         session()->forget('cart');
 
-        //
-        // --------------------------
-        // Obsługa płatności
-        // --------------------------
-        //
+        // (opcjonalnie) czyścimy również dane checkoutu
+        // session()->forget([
+        //     'checkout_name','checkout_email','checkout_phone',
+        //     'checkout_address','checkout_city','checkout_postal_code',
+        //     'checkout_delivery_method','checkout_payment_method',
+        //     'inpost_point','inpost_point_id','inpost_point_full',
+        // ]);
 
-        // 1) Przelewy24 → redirect do bramki
-        if ($request->payment_method === 'p24') {
+        // ------------------ Rozgałęzienie płatności ------------------
+
+        if ($paymentMethod === 'p24') {
+            // tutaj później podepniemy realną integrację z Przelewy24
             return redirect()->route('p24.redirect', ['order' => $order->id]);
         }
 
-        // 2) Przelew tradycyjny → strona sukcesu
+        // Przelew tradycyjny → prosta strona z sukcesem / danymi do przelewu
         return redirect()->route('checkout.success', [
-            'order' => $order->order_number
+            'order' => $order->order_number,
         ]);
     }
 
+    /**
+     * Strona sukcesu (po przelewie tradycyjnym lub udanym P24)
+     */
     public function success($orderNumber)
     {
         $order = Order::where('order_number', $orderNumber)->firstOrFail();
 
         return view('checkout.success', [
-            'order' => $order
+            'order' => $order,
         ]);
     }
+
+    /**
+     * AJAX – zapisywanie pól checkoutu (wywoływane w koszyku)
+     */
     public function updateField(Request $request)
-{
-    $field = $request->field;
-    $value = $request->value;
+    {
+        $field = $request->field;
+        $value = $request->value;
 
-    // zabezpieczenie – pozwalamy tylko na określone pola
-    $allowed = [
-        'name',
-        'email',
-        'phone',
-        'delivery_method',
-        'delivery_point',
-        'address',
-        'city',
-        'postal_code',
-        'payment_method',
-    ];
+        $allowed = [
+            'name',
+            'email',
+            'phone',
+            'delivery_method',
+            'delivery_point',
+            'address',
+            'city',
+            'postal_code',
+            'payment_method',
+        ];
 
-    if (!in_array($field, $allowed)) {
-        return response()->json(['error' => 'Field not allowed'], 422);
+        if (!in_array($field, $allowed)) {
+            return response()->json(['error' => 'Field not allowed'], 422);
+        }
+
+        session(["checkout_{$field}" => $value]);
+
+        return response()->json(['success' => true]);
     }
 
-    session(["checkout_$field" => $value]);
+    /**
+     * AJAX – zapis wybranego paczkomatu (geowidget InPost)
+     */
+    public function saveLocker(Request $request)
+    {
+        session()->put('inpost_point', $request->locker);
+        session()->put('inpost_point_id', $request->locker_id);
+        session()->put('inpost_point_full', $request->locker_full);
 
-    return response()->json(['success' => true]);
-}
-
-public function saveLocker(Request $request)
-{
-    session()->put('inpost_point', $request->locker);
-    session()->put('inpost_point_id', $request->locker_id);
-    session()->put('inpost_point_full', $request->locker_full);
-
-    return response()->json(['status' => 'ok']);
-}
-
+        return response()->json(['status' => 'ok']);
+    }
 }
