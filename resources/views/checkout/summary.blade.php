@@ -5,6 +5,9 @@
 @php
     use Illuminate\Support\Facades\Storage;
 @endphp
+@php
+$delivery_point = old('delivery_point', request('delivery_point'));
+@endphp
 
 <div class="summary-container">
 
@@ -71,7 +74,7 @@
             </div>
             <div class="summary-row">
                 <span>Paczkomat:</span>
-                <span>{{ session('inpost_point') }}</span>
+                <span>{{ $delivery_point }}</span>
             </div>
         @else
             <div class="summary-row">

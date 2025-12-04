@@ -473,19 +473,34 @@
     }
 
     // Callback z geowidgetu InPost – to zostaje jak było, tylko bez fetchów
+    // function afterPointSelected(point) {
+    //     const formatted =
+    //         point.name + ' — ' +
+    //         point.address.line1;
+
+    //     const input = document.getElementById('delivery_point');
+    //     if (input) {
+    //         input.value = formatted;
+    //     }
+
+
+    //     closeLockerWidget();
+    // }
     function afterPointSelected(point) {
-        const formatted =
-            point.name + ' — ' +
-            point.address.line1;
+    const formatted =
+        point.name + " — " +
+        point.address.line1;
 
-        const input = document.getElementById('delivery_point');
-        if (input) {
-            input.value = formatted;
-        }
+    // pokaż w polu
+    document.getElementById('delivery_point').value = formatted;
 
-        // Resztę przekażemy w formularzu podsumowania
-        closeLockerWidget();
-    }
+    // zapisz do ukrytego pola, które pójdzie do SUMMARY POSTEM
+    const hidden = document.getElementById('hidden_delivery_point');
+    if (hidden) hidden.value = formatted;
+
+    closeLockerWidget();
+}
+
 
     function toggleDeliveryExtras() {
         const methodInput = document.querySelector('input[name="delivery_method"]:checked');
@@ -574,6 +589,11 @@
                 document.getElementById('hidden_address').value      = document.getElementById('address').value;
                 document.getElementById('hidden_postal_code').value  = document.getElementById('postal_code').value;
                 document.getElementById('hidden_city').value         = document.getElementById('city').value;
+
+                document.getElementById('checkout-summary-form').addEventListener('submit', function () {
+                    document.getElementById('hidden_delivery_point').value =
+                    document.getElementById('delivery_point').value;
+                });
             });
         }
     });
