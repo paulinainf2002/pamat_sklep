@@ -133,20 +133,38 @@ public function summary(Request $request)
             'payment_method'  => 'required|in:p24,transfer',
         ]);
 
-        // Dodatkowa walidacja
+        $address    = '';
+        $city       = '';
+        $postalCode = '';
+
         if ($request->delivery_method === 'inpost') {
+
             $request->validate([
                 'delivery_point' => 'required|string|max:255',
             ]);
+
+            $shippingPrice = 11.99;
+
+            // dla paczkomatu nie potrzebujemy klasycznego adresu
+            $address    = '';
+            $city       = '';
+            $postalCode = '';
         }
 
         if ($request->delivery_method === 'kurier') {
+
             $request->validate([
                 'address'     => 'required|string|max:255',
                 'city'        => 'required|string|max:255',
                 'postal_code' => 'required|string|max:20',
             ]);
-        }
+
+            $shippingPrice = 14.99;
+
+            $address    = $request->address;
+            $city       = $request->city;
+            $postalCode = $request->postal_code;
+}
 
         // Liczenie sum
         $productsTotal = array_sum(array_column($cart, 'price'));
@@ -164,25 +182,24 @@ public function summary(Request $request)
 
         // Tworzenie zamówienia
         $order = Order::create([
-            'order_number'     => $orderNumber,
-            'name'             => $request->name,
-            'email'            => $request->email,
-            'phone'            => $request->phone,
+            'order_number'    => $orderNumber,
+            'name'            => $request->name,
+            'email'           => $request->email,
+            'phone'           => $request->phone,
 
-            // teraz kontrolujemy wartości sami
-            'address'          => $address,
-            'city'             => $city,
-            'postal_code'      => $postalCode,
+            'address'         => $address,
+            'city'            => $city,
+            'postal_code'     => $postalCode,
 
-            'delivery_method'  => $request->delivery_method,
-            'delivery_point'   => $request->delivery_point ?? '',
-            'shipping_price'   => $shippingPrice,
+            'delivery_method' => $request->delivery_method,
+            'delivery_point'  => $request->delivery_point ?? '',
+            'shipping_price'  => $shippingPrice,
 
-            'payment_method'   => $request->payment_method,
-            'payment_status'   => 'pending',
+            'payment_method'  => $request->payment_method,
+            'payment_status'  => 'pending',
 
-            'total'            => $finalTotal,
-            'status'           => 'pending',
+            'total'           => $finalTotal,
+            'status'          => 'pending',
         ]);
 
 
