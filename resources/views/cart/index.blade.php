@@ -201,7 +201,6 @@
                                         onclick="closeLockerWidget()"
                                         style="position:absolute; top:10px; right:10px;
                                             background:none; border:none; font-size:24px; cursor:pointer;">
-                                    ×
                                 </button>
 
                                 <!-- TU ŁADUJE SIĘ WIDGET INPOST -->
