@@ -16,7 +16,7 @@ public function applyCoupon(Request $request)
     $coupons = [
         'RABAT10' => 0.10,
         'RABAT15' => 0.15,
-        'PROMO5'  => 0.05,
+        'JESIEN5'  => 0.05,
     ];
 
     if (! array_key_exists($code, $coupons)) {
