@@ -62,4 +62,11 @@ class OrderResource extends Resource
             'edit'   => EditOrder::route('/{record}/edit'),
         ];
     }
+    public static function getRelations(): array
+    {
+        return [
+            \App\Filament\Resources\Orders\OrderResource\RelationManagers\ItemsRelationManager::class,
+        ];
+    }
+
 }

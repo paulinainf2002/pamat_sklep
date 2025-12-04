@@ -3,11 +3,7 @@
 namespace App\Filament\Resources\Orders\Schemas;
 
 use Filament\Schemas\Schema;
-use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Repeater;
 
 class OrderForm
 {
@@ -15,70 +11,61 @@ class OrderForm
     {
         return $schema->schema([
 
-            // --- DANE ZAMÓWIENIA ---
+            // DANE KLIENTA
             TextInput::make('order_number')
                 ->label('Numer zamówienia')
-                ->disabled()
-                ->columnSpan(2),
-
-            TextInput::make('total')
-                ->label('Suma (PLN)')
                 ->disabled(),
 
-            Select::make('status')
-                ->label('Status')
-                ->options([
-                    'pending' => 'Oczekujące',
-                    'paid'    => 'Opłacone',
-                    'failed'  => 'Nieudane',
-                ])
-                ->required(),
-
-            // --- DANE KLIENTA ---
             TextInput::make('name')
                 ->label('Imię i nazwisko')
-                ->required()
-                ->columnSpanFull(),
+                ->disabled(),
 
             TextInput::make('email')
-                ->label('Email')
-                ->email()
-                ->required(),
+                ->label('Adres e-mail')
+                ->disabled(),
 
             TextInput::make('phone')
                 ->label('Telefon')
-                ->required(),
+                ->disabled(),
+
+            // DOSTAWA
+            TextInput::make('delivery_method')
+                ->label('Metoda dostawy')
+                ->disabled(),
+
+            TextInput::make('delivery_point')
+                ->label('Paczkomat InPost')
+                ->disabled(),
 
             TextInput::make('address')
-                ->label('Adres')
-                ->required(),
-
-            TextInput::make('postal_code')
-                ->label('Kod pocztowy')
-                ->required(),
+                ->label('Adres (kurier)')
+                ->disabled(),
 
             TextInput::make('city')
                 ->label('Miasto')
-                ->required(),
+                ->disabled(),
 
-            // --- POZYCJE ZAMÓWIENIA (TYLKO PODGLĄD) ---
-            Repeater::make('items')
-                ->label('Produkty w zamówieniu')
-                ->schema([
-                    TextInput::make('product_id')
-                        ->label('ID produktu')
-                        ->disabled(),
+            TextInput::make('postal_code')
+                ->label('Kod pocztowy')
+                ->disabled(),
 
-                    TextInput::make('quantity')
-                        ->label('Ilość')
-                        ->disabled(),
+            // PŁATNOŚĆ
+            TextInput::make('payment_method')
+                ->label('Metoda płatności')
+                ->disabled(),
 
-                    TextInput::make('price')
-                        ->label('Cena (PLN)')
-                        ->disabled(),
-                ])
-                ->disabled()
-                ->columnSpanFull(),
+            TextInput::make('payment_status')
+                ->label('Status płatności')
+                ->disabled(),
+
+            // PODSUMOWANIE
+            TextInput::make('total')
+                ->label('Kwota zamówienia')
+                ->prefix('PLN')
+                ->disabled(),
+
+            TextInput::make('status')
+                ->label('Status zamówienia'),
         ]);
     }
 }
