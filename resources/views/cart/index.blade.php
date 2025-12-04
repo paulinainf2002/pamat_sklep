@@ -476,8 +476,7 @@
     function afterPointSelected(point) {
         const formatted =
             point.name + ' — ' +
-            point.address.line1 + ', ' +
-            point.address.city;
+            point.address.line1;
 
         const input = document.getElementById('delivery_point');
         if (input) {
