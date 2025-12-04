@@ -188,7 +188,7 @@ public function summary(Request $request)
                                 ? $request->postal_code
                                 : null,
 
-            'shipping_price' => $shippingPrice,
+            // 'shipping_price' => $shippingPrice,
 
             // -------------------------------
             // PŁATNOŚĆ
