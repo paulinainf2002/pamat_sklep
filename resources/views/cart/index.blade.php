@@ -163,15 +163,39 @@
 
                 {{-- DODATKOWE POLA DLA PACZKOMATU --}}
                 <div id="inpostFields" class="delivery-extra" style="margin-top:1rem;">
-                    <label>Wybrany paczkomat</label>
-                    <div class="coupon-row">
-                       <button type="button" onclick="openInpostWidget()" class="btn-green">
-                            Wybierz paczkomat
-                        </button>
 
-                        <input type="text" id="delivery_point" readonly placeholder="Brak wybranego paczkomatu">
+                    <button type="button" onclick="openLockerWidget()" class="btn-green">
+    Wybierz paczkomat InPost
+</button>
 
-                    </div>
+<input type="text" id="delivery_point" placeholder="Brak wybranego paczkomatu" readonly>
+
+                    <div id="lockerModal" style="display:none;
+    position:fixed; top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:9999;
+    justify-content:center; align-items:center;">
+
+    <div style="width:90%; max-width:600px; height:80%; background:#fff; border-radius:12px; padding:0; position:relative;">
+
+        <button onclick="closeLockerWidget()"
+                style="position:absolute; top:10px; right:10px;
+                       background:none; border:none; font-size:24px; cursor:pointer;">
+            ×
+        </button>
+
+        <!-- TU ŁADUJE SIĘ WIDGET INPOST -->
+        <inpost-geowidget id="lockerWidget"
+                          token="{{ env('INPOST_GEO_TOKEN') }}"
+                          language="pl"
+                          config="parcelCollect"
+                          onpoint="afterPointSelected">
+        </inpost-geowidget>
+
+    </div>
+</div>
+
                 </div>
 
                 {{-- DODATKOWE POLA DLA KURIERA --}}
@@ -308,40 +332,39 @@
             body: JSON.stringify({ field, value }),
         }).catch(() => {});
     }
-function openInpostWidget() {
+function openLockerWidget() {
+    document.getElementById('lockerModal').style.display = "flex";
+}
 
-    InPost.Geowidget.bootstrap({
-        token: "{{ env('INPOST_GEO_TOKEN') }}",
-        config: {
-            target: "#geowidget-modal", // element gdzie widget ma się pojawić
-            modalMode: true,            // automatyczny modal
-            language: "pl"
+function closeLockerWidget() {
+    document.getElementById('lockerModal').style.display = "none";
+}
+
+// Callback gdy użytkownik wybierze paczkomat
+function afterPointSelected(point) {
+
+    const formatted =
+        point.name + " — " +
+        point.address.line1 + ", " +
+        point.address.city;
+
+    document.getElementById("delivery_point").value = formatted;
+
+    // zapis do sesji
+    fetch("{{ route('checkout.shipping.point') }}", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "Content-Type": "application/json",
         },
-        onPick: function(point) {
-
-            const full =
-                point.name + " — " +
-                point.address.line1 + ", " +
-                point.address.city;
-
-            document.getElementById("delivery_point").value = full;
-
-            fetch("{{ route('checkout.shipping.point') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    locker: full,
-                    locker_id: point.name,
-                    locker_full: point
-                })
-            });
-
-            console.log("Wybrano paczkomat:", point);
-        }
+        body: JSON.stringify({
+            locker: formatted,
+            locker_id: point.name,
+            locker_full: point
+        })
     });
+
+    closeLockerWidget();
 }
 
     function toggleDeliveryExtras() {

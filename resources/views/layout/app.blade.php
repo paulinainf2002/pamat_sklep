@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<script src="https://geowidget.inpost.pl/inpost-geowidget.js"></script>
-
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Sklep PAMAT')</title>
@@ -13,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=manrope:300,400,500,600,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/shop.css') }}">
+    <link rel="stylesheet" href="https://geowidget.inpost.pl/inpost-geowidget.css" />
+    <script src="https://geowidget.inpost.pl/inpost-geowidget.js" defer></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
