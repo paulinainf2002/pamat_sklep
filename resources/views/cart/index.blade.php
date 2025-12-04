@@ -89,290 +89,285 @@
             <button class="btn-clear-all">Wyczyść koszyk</button>
         </form>
 
-        {{-- DANE KLIENTA --}}
-        <hr style="margin: 3rem 0; border-color:#e5e7eb;">
+        {{-- FORMULARZ CHECKOUTU – WSZYSTKO LECI POSTEM DO /checkout/summary --}}
+        <form action="{{ route('checkout.summary') }}" method="POST" style="margin-top: 3rem;">
+            @csrf
 
-        <h2 style="color:#3E4E20; margin-bottom:1.5rem;">Dane klienta</h2>
+            {{-- DANE KLIENTA --}}
+            <hr style="margin: 3rem 0; border-color:#e5e7eb;">
 
-        <div class="checkout-box">
-            <div class="checkout-flex-vertical">
+            <h2 style="color:#3E4E20; margin-bottom:1.5rem;">Dane klienta</h2>
 
-                <div class="checkout-field">
-                    <label>Imię i nazwisko</label></br>
-                    <input
-                        type="text"
-                        id="name"
-                        class="checkout-input"
-                        placeholder="Jan Kowalski"
-                        value="{{ session('checkout_name') }}"
-                    >
-                </div>
-
-                <div class="checkout-field">
-                    <label>Adres e-mail</label></br>
-                    <input
-                        type="email"
-                        id="email"
-                        class="checkout-input"
-                        placeholder="jan.kowalski@example.com"
-                        value="{{ session('checkout_email') }}"
-                    >
-                </div>
-
-                <div class="checkout-field">
-                    <label>Telefon</label></br>
-                    <input
-                        type="text"
-                        id="phone"
-                        class="checkout-input"
-                        placeholder="123 456 789"
-                        value="{{ session('checkout_phone') }}"
-                    >
-                </div>
-
-            </div>
-        </div>
-
-        {{-- DOSTAWA I PŁATNOŚĆ --}}
-        <hr style="margin: 3rem 0; border-color:#e5e7eb;">
-
-        <h2 style="color:#3E4E20; margin-bottom:1.5rem;">Dostawa i płatność</h2>
-
-        <div class="checkout-flex">
-
-            {{-- LEWA KOLUMNA – DOSTAWA --}}
             <div class="checkout-box">
-                <h3>Dostawa</h3>
+                <div class="checkout-flex-vertical">
 
-                @php
-                    $deliveryMethod = session('checkout_delivery_method', 'inpost');
-                    $paymentMethod  = session('checkout_payment_method', 'p24');
-                @endphp
+                    <div class="checkout-field">
+                        <label>Imię i nazwisko</label></br>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            class="checkout-input"
+                            placeholder="Jan Kowalski"
+                            value="{{ old('name', session('checkout_name')) }}"
+                            required
+                        >
+                    </div>
 
-                <label class="radio-line">
-                    <input type="radio" name="delivery_method" value="inpost"
-                        {{ $deliveryMethod === 'inpost' ? 'checked' : '' }}>
-                    Paczkomat InPost — 11.99 zł
-                </label>
+                    <div class="checkout-field">
+                        <label>Adres e-mail</label></br>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="checkout-input"
+                            placeholder="jan.kowalski@example.com"
+                            value="{{ old('email', session('checkout_email')) }}"
+                            required
+                        >
+                    </div>
 
-                <label class="radio-line">
-                    <input type="radio" name="delivery_method" value="kurier"
-                        {{ $deliveryMethod === 'kurier' ? 'checked' : '' }}>
-                    Kurier — 14.99 zł
-                </label>
-
-                {{-- DODATKOWE POLA DLA PACZKOMATU --}}
-                <div id="inpostFields" class="delivery-extra" style="margin-top:1rem;">
-
-                    <button type="button" onclick="openLockerWidget()" class="btn-green">
-    Wybierz paczkomat InPost
-</button>
-
-<input type="text" id="delivery_point" placeholder="Brak wybranego paczkomatu" readonly>
-
-                    <div id="lockerModal" style="display:none;
-    position:fixed; top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(0,0,0,0.6);
-    z-index:9999;
-    justify-content:center; align-items:center;">
-
-    <div style="width:90%; max-width:600px; height:80%; background:#fff; border-radius:12px; padding:0; position:relative;">
-
-        <button onclick="closeLockerWidget()"
-                style="position:absolute; top:10px; right:10px;
-                       background:none; border:none; font-size:24px; cursor:pointer;">
-            ×
-        </button>
-
-        <!-- TU ŁADUJE SIĘ WIDGET INPOST -->
-        <inpost-geowidget id="lockerWidget"
-                          token="{{ env('INPOST_GEO_TOKEN') }}"
-                          language="pl"
-                          config="parcelCollect"
-                          onpoint="afterPointSelected">
-        </inpost-geowidget>
-
-    </div>
-</div>
+                    <div class="checkout-field">
+                        <label>Telefon</label></br>
+                        <input
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            class="checkout-input"
+                            placeholder="123 456 789"
+                            value="{{ old('phone', session('checkout_phone')) }}"
+                            required
+                        >
+                    </div>
 
                 </div>
+            </div>
 
-                {{-- DODATKOWE POLA DLA KURIERA --}}
-                <div id="courierFields" class="delivery-extra" style="margin-top:1rem;">
-                    <label>Adres dostawy (kurier)</label></br>
+            {{-- DOSTAWA I PŁATNOŚĆ --}}
+            <hr style="margin: 3rem 0; border-color:#e5e7eb;">
+
+            <h2 style="color:#3E4E20; margin-bottom:1.5rem;">Dostawa i płatność</h2>
+
+            <div class="checkout-flex">
+
+                {{-- LEWA KOLUMNA – DOSTAWA --}}
+                <div class="checkout-box">
+                    <h3>Dostawa</h3>
+
+                    @php
+                        $deliveryMethod = session('checkout_delivery_method', 'inpost');
+                        $paymentMethod  = session('checkout_payment_method', 'p24');
+                    @endphp
+
+                    <label class="radio-line">
+                        <input type="radio" name="delivery_method" value="inpost"
+                            {{ old('delivery_method', $deliveryMethod) === 'inpost' ? 'checked' : '' }}>
+                        Paczkomat InPost — 11.99 zł
+                    </label>
+
+                    <label class="radio-line">
+                        <input type="radio" name="delivery_method" value="kurier"
+                            {{ old('delivery_method', $deliveryMethod) === 'kurier' ? 'checked' : '' }}>
+                        Kurier — 14.99 zł
+                    </label>
+
+                    {{-- DODATKOWE POLA DLA PACZKOMATU --}}
+                    <div id="inpostFields" class="delivery-extra" style="margin-top:1rem;">
+
+                        <button type="button" onclick="openLockerWidget()" class="btn-green">
+                            Wybierz paczkomat InPost
+                        </button>
+
+                        <input
+                            type="text"
+                            id="delivery_point"
+                            name="delivery_point"
+                            placeholder="Brak wybranego paczkomatu"
+                            readonly
+                            value="{{ old('delivery_point', session('inpost_point')) }}"
+                            style="margin-top:0.5rem;"
+                        >
+
+                        <div id="lockerModal" style="display:none;
+                            position:fixed; top:0; left:0;
+                            width:100%; height:100%;
+                            background:rgba(0,0,0,0.6);
+                            z-index:9999;
+                            justify-content:center; align-items:center;">
+
+                            <div style="width:90%; max-width:600px; height:80%; background:#fff; border-radius:12px; padding:0; position:relative;">
+
+                                <button type="button"
+                                        onclick="closeLockerWidget()"
+                                        style="position:absolute; top:10px; right:10px;
+                                            background:none; border:none; font-size:24px; cursor:pointer;">
+                                    ×
+                                </button>
+
+                                <!-- TU ŁADUJE SIĘ WIDGET INPOST -->
+                                <inpost-geowidget id="lockerWidget"
+                                                  token="{{ env('INPOST_GEO_TOKEN') }}"
+                                                  language="pl"
+                                                  config="parcelCollect"
+                                                  onpoint="afterPointSelected">
+                                </inpost-geowidget>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{-- DODATKOWE POLA DLA KURIERA --}}
+                    <div id="courierFields" class="delivery-extra" style="margin-top:1rem;">
+                        <label>Adres dostawy (kurier)</label></br>
 
                         <input
                             type="text"
                             id="address"
+                            name="address"
                             class="checkout-input"
                             placeholder="Ulica i numer domu"
-                            value="{{ session('checkout_address') }}"
+                            value="{{ old('address', session('checkout_address')) }}"
                             style="width:237px;margin-bottom:0.5rem;"
                         ></br>
-
 
                         <input
                             type="text"
                             id="postal_code"
+                            name="postal_code"
                             class="checkout-input"
                             placeholder="Kod pocztowy"
-                            value="{{ session('checkout_postal_code') }}"
+                            value="{{ old('postal_code', session('checkout_postal_code')) }}"
                             style="width:237px;margin-bottom:0.5rem;"
                         ></br>
 
                         <input
                             type="text"
                             id="city"
+                            name="city"
                             class="checkout-input"
                             placeholder="Miasto"
-                            value="{{ session('checkout_city') }}"
+                            value="{{ old('city', session('checkout_city')) }}"
                             style="width:237px;"
                         >
 
-                </div>
-            </div>
-
-            {{-- PRAWA KOLUMNA – PŁATNOŚĆ --}}
-            <div class="checkout-box">
-                <h3>Płatność</h3>
-
-                <label class="radio-line">
-                    <input type="radio" name="payment_method" value="p24"
-                        {{ $paymentMethod === 'p24' ? 'checked' : '' }}>
-                    Przelewy24 (BLIK, przelew, karta)
-                </label>
-
-                <label class="radio-line">
-                    <input type="radio" name="payment_method" value="transfer"
-                        {{ $paymentMethod === 'transfer' ? 'checked' : '' }}>
-                    Przelew tradycyjny
-                </label>
-            </div>
-
-        </div>
-
-        {{-- KOD RABATOWY --}}
-        <div class="checkout-box" style="margin-top: 2rem;">
-            <h3>Kod rabatowy</h3>
-
-            <form action="{{ route('checkout.coupon') }}" method="POST" class="coupon-form">
-                @csrf
-
-                <div class="coupon-row">
-                    <input type="text" name="coupon" placeholder="np. RABAT10"
-                           value="{{ session('coupon_code') }}">
-                    <button class="btn-apply">Zastosuj</button>
+                    </div>
                 </div>
 
-                @if (session('coupon'))
-                    <p class="coupon-success">
-                        Zastosowano kod: <strong>{{ session('coupon_code') }}</strong>
-                        ({{ session('coupon') * 100 }}%)
-                    </p>
-                @endif
-            </form>
-        </div>
+                {{-- PRAWA KOLUMNA – PŁATNOŚĆ --}}
+                <div class="checkout-box">
+                    <h3>Płatność</h3>
 
-        {{-- PODSUMOWANIE --}}
-        <div id="summaryBox" class="checkout-box" style="margin-top: 2rem;">
-            <h3>Podsumowanie zamówienia</h3>
+                    <label class="radio-line">
+                        <input type="radio" name="payment_method" value="p24"
+                            {{ old('payment_method', $paymentMethod) === 'p24' ? 'checked' : '' }}>
+                        Przelewy24 (BLIK, przelew, karta)
+                    </label>
 
-            <table class="summary-table">
-                <tr>
-                    <td>Suma produktów:</td>
-                    <td id="sumProducts">0 zł</td>
-                </tr>
+                    <label class="radio-line">
+                        <input type="radio" name="payment_method" value="transfer"
+                            {{ old('payment_method', $paymentMethod) === 'transfer' ? 'checked' : '' }}>
+                        Przelew tradycyjny
+                    </label>
+                </div>
 
-                <tr>
-                    <td>Rabat (@if(session('coupon')){{ session('coupon') * 100 }}%@else 0%@endif):</td>
-                    <td id="sumDiscount">0 zł</td>
-                </tr>
+            </div>
 
-                <tr>
-                    <td>Dostawa:</td>
-                    <td id="sumShipping">0 zł</td>
-                </tr>
+            {{-- KOD RABATOWY --}}
+            <div class="checkout-box" style="margin-top: 2rem;">
+                <h3>Kod rabatowy</h3>
 
-                <tr class="summary-total-row">
-                    <td><strong>Razem do zapłaty:</strong></td>
-                    <td id="sumTotal"><strong>0 zł</strong></td>
-                </tr>
-            </table>
-        </div>
+                <form action="{{ route('checkout.coupon') }}" method="POST" class="coupon-form">
+                    @csrf
 
-        {{-- PRZYCISK DALEJ --}}
-        <div style="text-align:right; margin-top:2rem;">
-            <a href="{{ route('checkout.summary') }}" class="checkout-next-btn">
-                Przejdź do podsumowania zamówienia →
-            </a>
-        </div>
+                    <div class="coupon-row">
+                        <input type="text"
+                            name="coupon"
+                            placeholder="np. RABAT10"
+                            value="{{ session('coupon_code') }}">
+
+                        <button class="btn-apply" type="submit">Zastosuj</button>
+                    </div>
+
+                    @if (session('coupon'))
+                        <p class="coupon-success">
+                            Zastosowano kod: <strong>{{ session('coupon_code') }}</strong>
+                            ({{ session('coupon') * 100 }}%)
+                        </p>
+                    @endif
+
+                    @if (session('error'))
+                        <p class="coupon-error">{{ session('error') }}</p>
+                    @endif
+                </form>
+            </div>
+
+
+
+            {{-- PODSUMOWANIE --}}
+            <div id="summaryBox" class="checkout-box" style="margin-top: 2rem;">
+                <h3>Podsumowanie zamówienia</h3>
+
+                <table class="summary-table">
+                    <tr>
+                        <td>Suma produktów:</td>
+                        <td id="sumProducts">{{ number_format($total, 2) }} zł</td>
+                    </tr>
+
+                    <tr>
+                        <td>Rabat (@if(session('coupon')){{ session('coupon') * 100 }}%@else 0%@endif):</td>
+                        <td id="sumDiscount">0 zł</td>
+                    </tr>
+
+                    <tr>
+                        <td>Dostawa:</td>
+                        <td id="sumShipping">0 zł</td>
+                    </tr>
+
+                    <tr class="summary-total-row">
+                        <td><strong>Razem do zapłaty:</strong></td>
+                        <td id="sumTotal"><strong>0 zł</strong></td>
+                    </tr>
+                </table>
+            </div>
+
+            {{-- PRZYCISK DALEJ --}}
+            <div style="text-align:right; margin-top:2rem;">
+                <button type="submit" class="checkout-next-btn">
+                    Przejdź do podsumowania zamówienia →
+                </button>
+            </div>
+
+        </form>
 
     @endif
-    <!-- MODAL MAPY INPOST -->
-<div id="geowidget-modal"></div>
-
-
-
 
 </div>
 
 {{-- JS --}}
 <script>
-    const updateFieldUrl = "{{ route('checkout.updateField') }}";
-    const csrfToken = "{{ csrf_token() }}";
+    function openLockerWidget() {
+        document.getElementById('lockerModal').style.display = "flex";
+    }
 
-function updateField(field, value) {
-    fetch("{{ route('checkout.updateField') }}", {
-        method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        },
-        body: JSON.stringify({ field, value }),
-    }).catch(() => {
-        console.warn("updateField failed");
-    });
-}
+    function closeLockerWidget() {
+        document.getElementById('lockerModal').style.display = "none";
+    }
 
-function openLockerWidget() {
-    document.getElementById('lockerModal').style.display = "flex";
-}
+    // Callback gdy użytkownik wybierze paczkomat
+    function afterPointSelected(point) {
+        const formatted =
+            point.name + " — " +
+            point.address.line1 + ", " +
+            point.address.city;
 
-function closeLockerWidget() {
-    document.getElementById('lockerModal').style.display = "none";
-}
+        const input = document.getElementById("delivery_point");
+        if (input) {
+            input.value = formatted;
+        }
 
-// Callback gdy użytkownik wybierze paczkomat
-function afterPointSelected(point) {
-
-    const formatted =
-        point.name + " — " +
-        point.address.line1 + ", " +
-        point.address.city;
-
-    document.getElementById("delivery_point").value = formatted;
-
-    updateField('delivery_point', formatted); // ➕ DODAJ TO
-
-    fetch("{{ route('checkout.shipping.point') }}", {
-        method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            locker: formatted,
-            locker_id: point.name,
-            locker_full: point
-        })
-    });
-
-    closeLockerWidget();
-}
-
-
+        closeLockerWidget();
+    }
 
     function toggleDeliveryExtras() {
         const method = document.querySelector('input[name="delivery_method"]:checked')?.value;
@@ -412,39 +407,11 @@ function afterPointSelected(point) {
         document.getElementById('sumTotal').innerHTML = "<strong>" + final.toFixed(2) + " zł</strong>";
     }
 
-    // LISTENERY — dane klienta
-    ['name', 'email', 'phone'].forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', (e) => {
-                updateField(id, e.target.value);
-            });
-        }
-    });
-
-    // LISTENERY — adres kuriera
-    ['address', 'city', 'postal_code'].forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', (e) => {
-                updateField(id, e.target.value);
-            });
-        }
-    });
-
     // LISTENERY — dostawa
     document.querySelectorAll('input[name="delivery_method"]').forEach(el => {
         el.addEventListener('change', () => {
-            updateField('delivery_method', el.value);
             toggleDeliveryExtras();
             calculateSummary();
-        });
-    });
-
-    // LISTENERY — płatność
-    document.querySelectorAll('input[name="payment_method"]').forEach(el => {
-        el.addEventListener('change', () => {
-            updateField('payment_method', el.value);
         });
     });
 
@@ -452,6 +419,5 @@ function afterPointSelected(point) {
     toggleDeliveryExtras();
     calculateSummary();
 </script>
-
 
 @endsection

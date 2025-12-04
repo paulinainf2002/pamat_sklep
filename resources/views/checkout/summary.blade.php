@@ -1,108 +1,173 @@
 @extends('layout.app')
 
 @section('content')
-<div class="cart-container">
 
-    <h1 class="cart-title">Podsumowanie zamówienia</h1>
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
+<div class="summary-container">
+
+    <h1 class="summary-title">Podsumowanie zamówienia</h1>
 
     {{-- PRODUKTY --}}
-    <div class="checkout-box">
-        <h2>Twoje produkty</h2>
+    <div class="summary-section">
+        <h2 class="summary-heading">Produkty</h2>
 
-        @foreach($cart as $item)
-            <div class="cart-item">
-                <div class="cart-thumb">
-                    <img src="{{ Storage::url($item['image']) }}" alt="">
-                </div>
+        @foreach ($cart as $item)
+            <div class="summary-product">
+                <div class="summary-product-left">
+                    <img src="{{ Storage::url($item['image']) }}" alt="{{ $item['name'] }}" class="summary-product-thumb">
 
-                <div class="cart-info">
-                    <div class="cart-name">{{ $item['name'] }}</div>
-
-                    <div class="cart-unit">
-                        @if($item['type'] === 'set')
-                            {{ $item['quantity'] }} × zestaw
-                        @else
-                            {{ $item['quantity'] }} × {{ $item['weight'] }} g
-                        @endif
+                    <div class="summary-product-text">
+                        <div class="summary-product-name">{{ $item['name'] }}</div>
+                        <div class="summary-product-meta">
+                            @if ($item['type'] === 'set')
+                                {{ $item['quantity'] }} × zestaw
+                            @else
+                                {{ $item['quantity'] }} × {{ $item['weight'] }} g
+                            @endif
+                        </div>
                     </div>
                 </div>
 
-                <div class="cart-total">
+                <div class="summary-product-price">
                     {{ number_format($item['price'], 2) }} zł
                 </div>
             </div>
         @endforeach
+    </div>
 
-        <div class="cart-summary" style="margin-top:1rem;">
-            Suma produktów: <strong>{{ number_format($total, 2) }} zł</strong>
+    <hr class="summary-divider">
+
+    {{-- DANE KLIENTA --}}
+    <div class="summary-section">
+        <h2 class="summary-heading">Dane klienta</h2>
+
+        <div class="summary-row">
+            <span>Imię i nazwisko:</span>
+            <span>{{ session('checkout_name') }}</span>
+        </div>
+        <div class="summary-row">
+            <span>Email:</span>
+            <span>{{ session('checkout_email') }}</span>
+        </div>
+        <div class="summary-row">
+            <span>Telefon:</span>
+            <span>{{ session('checkout_phone') }}</span>
         </div>
     </div>
 
-    {{-- DANE KLIENTA --}}
-    <div class="checkout-box" style="margin-top:2rem;">
-        <h2>Dane klienta</h2>
-
-        <p><strong>Imię i nazwisko:</strong> {{ session('checkout_name') }}</p>
-        <p><strong>E-mail:</strong> {{ session('checkout_email') }}</p>
-        <p><strong>Telefon:</strong> {{ session('checkout_phone') }}</p>
-    </div>
+    <hr class="summary-divider">
 
     {{-- DOSTAWA --}}
-    @php
-        $deliveryMethod = session('checkout_delivery_method', 'inpost');
-        $paymentMethod  = session('checkout_payment_method', 'p24');
-        $shippingPrice  = $deliveryMethod === 'inpost' ? 11.99 : 14.99;
-        $finalTotal     = $total + $shippingPrice;
-    @endphp
+    <div class="summary-section">
+        <h2 class="summary-heading">Dostawa</h2>
 
-    <div class="checkout-box" style="margin-top:2rem;">
-        <h2>Dostawa</h2>
-
-        @if($deliveryMethod === 'inpost')
-            <p><strong>Metoda:</strong> Paczkomat InPost</p>
-            <p><strong>Punkt:</strong> {{ session('inpost_point') ?: 'Nie wybrano' }}</p>
+        @if (session('checkout_delivery_method') === 'inpost')
+            <div class="summary-row">
+                <span>Metoda:</span>
+                <span>Paczkomat InPost</span>
+            </div>
+            <div class="summary-row">
+                <span>Paczkomat:</span>
+                <span>{{ session('inpost_point') }}</span>
+            </div>
         @else
-            <p><strong>Metoda:</strong> Kurier</p>
-            <p>
-                <strong>Adres:</strong>
-                {{ session('checkout_address') }},
-                {{ session('checkout_postal_code') }}
-                {{ session('checkout_city') }}
-            </p>
+            <div class="summary-row">
+                <span>Metoda:</span>
+                <span>Kurier</span>
+            </div>
+            <div class="summary-row">
+                <span>Adres:</span>
+                <span>{{ session('checkout_address') }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Kod pocztowy:</span>
+                <span>{{ session('checkout_postal_code') }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Miasto:</span>
+                <span>{{ session('checkout_city') }}</span>
+            </div>
         @endif
-
-        <p><strong>Koszt dostawy:</strong> {{ number_format($shippingPrice, 2) }} zł</p>
     </div>
+
+    <hr class="summary-divider">
 
     {{-- PŁATNOŚĆ --}}
-    <div class="checkout-box" style="margin-top:2rem;">
-        <h2>Płatność</h2>
-
-        <p>
-            <strong>Metoda:</strong>
-            @if($paymentMethod === 'p24')
-                Przelewy24
-            @else
-                Przelew tradycyjny
-            @endif
-        </p>
-
-        <p class="cart-summary">
-            Razem do zapłaty:
-            <strong>{{ number_format($finalTotal, 2) }} zł</strong>
-        </p>
+    <div class="summary-section">
+        <h2 class="summary-heading">Płatność</h2>
+        <div class="summary-row">
+            <span>Metoda:</span>
+            <span>
+                @if (session('checkout_payment_method') === 'p24')
+                    Przelewy24
+                @else
+                    Przelew tradycyjny
+                @endif
+            </span>
+        </div>
     </div>
 
-    {{-- ZŁÓŻ ZAMÓWIENIE --}}
-    <div style="text-align:right; margin-top:2rem;">
-        <form action="{{ route('checkout.placeOrder') }}" method="POST">
-    @csrf
-    <button type="submit" class="checkout-next-btn">
-        Złóż zamówienie →
-    </button>
-</form>
+    <hr class="summary-divider">
 
+    {{-- SUMA --}}
+    <div class="summary-section">
+        <h2 class="summary-heading">Podsumowanie płatności</h2>
+
+        <div class="summary-row">
+            <span>Suma produktów:</span>
+            <span>{{ number_format($productsTotal, 2) }} zł</span>
+        </div>
+
+        <div class="summary-row">
+            <span>Rabat:</span>
+            <span>- {{ number_format($discount, 2) }} zł
+                @if(session('coupon'))
+                    ({{ session('coupon') * 100 }}%)
+                @endif
+            </span>
+        </div>
+
+        <div class="summary-row">
+            <span>Dostawa:</span>
+            <span>{{ number_format($shipping, 2) }} zł</span>
+        </div>
+
+        <div class="summary-total">
+            Razem do zapłaty: {{ number_format($final, 2) }} zł
+        </div>
     </div>
+
+    {{-- FORMULARZ WYSYŁKI --}}
+    <form action="{{ route('checkout.placeOrder') }}" method="POST" class="summary-form">
+        @csrf
+
+        {{-- Dane klienta --}}
+        <input type="hidden" name="name" value="{{ session('checkout_name') }}">
+        <input type="hidden" name="email" value="{{ session('checkout_email') }}">
+        <input type="hidden" name="phone" value="{{ session('checkout_phone') }}">
+
+        {{-- Dostawa --}}
+        <input type="hidden" name="delivery_method" value="{{ session('checkout_delivery_method') }}">
+
+        @if (session('checkout_delivery_method') === 'inpost')
+            <input type="hidden" name="delivery_point" value="{{ session('inpost_point') }}">
+        @else
+            <input type="hidden" name="address" value="{{ session('checkout_address') }}">
+            <input type="hidden" name="postal_code" value="{{ session('checkout_postal_code') }}">
+            <input type="hidden" name="city" value="{{ session('checkout_city') }}">
+        @endif
+
+        {{-- Płatność --}}
+        <input type="hidden" name="payment_method" value="{{ session('checkout_payment_method') }}">
+
+        <button type="submit" class="summary-submit-btn">
+            Złóż zamówienie →
+        </button>
+    </form>
 
 </div>
+
 @endsection

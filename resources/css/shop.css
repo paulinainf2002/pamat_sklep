@@ -2487,3 +2487,177 @@ body::after {
 #inpostModal {
     backdrop-filter: blur(2px);
 }
+
+
+.summary-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: #fff;
+}
+
+.summary-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #3E4E20;
+    margin-bottom: 2rem;
+}
+
+.summary-section {
+    margin-bottom: 1.8rem;
+}
+
+.summary-heading {
+    color: #3E4E20;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-size: 1rem;
+}
+
+.summary-product-name {
+    font-weight: 500;
+}
+
+.summary-product-value {
+    font-weight: 600;
+}
+
+.summary-divider {
+    border: none;
+    border-top: 1px solid #e3e3e3;
+    margin: 2rem 0;
+}
+
+.summary-total {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #3E4E20;
+    text-align: right;
+}
+
+.summary-submit-btn {
+    display: inline-block;
+    margin-top: 2rem;
+    background-color: #3E4E20;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.summary-submit-btn:hover {
+    background-color: #586b30;
+}
+.summary-product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+}
+
+.summary-product-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.summary-product-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #e5e7eb;
+}
+
+.summary-product-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-product-name {
+    font-weight: 600;
+    color: #3E4E20;
+}
+
+.summary-product-meta {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.summary-product-price {
+    font-weight: 600;
+}
+
+.summary-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: #fff;
+}
+
+.summary-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #3E4E20;
+    margin-bottom: 2rem;
+}
+
+.summary-section {
+    margin-bottom: 1.8rem;
+}
+
+.summary-heading {
+    color: #3E4E20;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    font-size: 1rem;
+}
+
+.summary-divider {
+    border: none;
+    border-top: 1px solid #e3e3e3;
+    margin: 2rem 0;
+}
+
+.summary-total {
+    margin-top: 0.8rem;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #3E4E20;
+    text-align: right;
+}
+
+.summary-submit-btn {
+    display: inline-block;
+    margin-top: 2rem;
+    background-color: #3E4E20;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.summary-submit-btn:hover {
+    background-color: #586b30;
+}
+

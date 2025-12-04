@@ -76,7 +76,7 @@ Route::post('/checkout/save-locker', [CheckoutController::class, 'saveLocker'])
     ->name('checkout.shipping.point');
 
 // podsumowanie zamówienia
-Route::get('/checkout/summary', [CheckoutController::class, 'summary'])
+Route::match(['GET','POST'], '/checkout/summary', [CheckoutController::class, 'summary'])
     ->name('checkout.summary');
 
 // składanie zamówienia
@@ -88,9 +88,9 @@ Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])
     ->name('checkout.success');
 
 // (opcjonalnie) placeholder kodów rabatowych, aby nie wywalało błędu
-Route::post('/apply-coupon', function () {
-    return back()->with('error', 'Kody rabatowe będą dostępne później.');
-})->name('checkout.coupon');
+Route::post('/apply-coupon', [CheckoutController::class, 'applyCoupon'])
+    ->name('checkout.coupon');
+
 
 /*
 |--------------------------------------------------------------------------
