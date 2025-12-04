@@ -474,34 +474,19 @@
 
     // Callback z geowidgetu InPost – to zostaje jak było, tylko bez fetchów
     function afterPointSelected(point) {
+        const formatted =
+            point.name + ' — ' +
+            point.address.line1 + ', ' +
+            point.address.city;
 
-        const line1 = point.address && point.address.line1 ? point.address.line1 : '';
-        const city  = point.address && point.address.city  ? point.address.city  : '';
+        const input = document.getElementById('delivery_point');
+        if (input) {
+            input.value = formatted;
+        }
 
-        const formatted = line1
-            ? `${point.name} — ${line1}${city ? ', ' + city : ''}`
-            : point.name;
-
-        document.getElementById("delivery_point").value = formatted;
-
-        updateField('delivery_point', formatted);
-
-        fetch("{{ route('checkout.shipping.point') }}", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                locker: formatted,
-                locker_id: point.name,
-                locker_full: point
-            })
-        });
-
+        // Resztę przekażemy w formularzu podsumowania
         closeLockerWidget();
     }
-
 
     function toggleDeliveryExtras() {
         const methodInput = document.querySelector('input[name="delivery_method"]:checked');
