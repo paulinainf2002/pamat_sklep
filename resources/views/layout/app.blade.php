@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+<script src="https://geowidget.inpost.pl/inpost-geowidget.js"></script>
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Sklep PAMAT')</title>
@@ -305,8 +309,6 @@ function changeImage(url) {
     document.getElementById('mainImage').src = url;
 }
 </script>
-</div>
-
 </body>
     <footer class="site-footer">
         <div class="container footer-inner">

@@ -111,3 +111,14 @@ Route::get('/checkout-summary', [CheckoutController::class, 'summary'])->name('c
 Route::post('/accept-cookies', function () {
     return back()->cookie('cookies_accepted', true, 60*24*365);
 })->name('cookies.accept');
+
+
+Route::get('/checkout', [CheckoutController::class, 'summary'])->name('checkout.summary');
+Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
+Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+Route::post('/checkout/update-field', [CheckoutController::class, 'updateField'])
+    ->name('checkout.updateField');
+
+    Route::post('/checkout/shipping/point', [CheckoutController::class, 'saveLocker'])
+    ->name('checkout.shipping.point');
