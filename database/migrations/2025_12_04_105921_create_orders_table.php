@@ -17,9 +17,9 @@ public function up(): void
         $table->string('name');
         $table->string('email');
         $table->string('phone');
-        $table->string('address');
-        $table->string('city');
-        $table->string('postal_code');
+        $table->string('address')->nullable();
+        $table->string('city')->nullable();
+        $table->string('postal_code')->nullable();
         $table->decimal('total', 10, 2);
         $table->string('status')->default('pending'); // pending, paid, failed
         $table->timestamps();

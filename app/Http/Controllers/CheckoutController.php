@@ -144,26 +144,65 @@ public function summary(Request $request)
         $orderNumber = 'PMT-' . now()->format('Y') . '-' . str_pad(Order::count() + 1, 4, '0', STR_PAD_LEFT);
 
         // Tworzenie zamówienia
+        // $order = Order::create([
+        //     'order_number'     => $orderNumber,
+        //     'name'             => $request->name,
+        //     'email'            => $request->email,
+        //     'phone'            => $request->phone,
+
+        //     'address'          => $request->address ?? null,
+        //     'city'             => $request->city ?? null,
+        //     'postal_code'      => $request->postal_code ?? null,
+
+        //     'delivery_method'  => $request->delivery_method,
+        //     'delivery_point'   => $request->delivery_point ?? null,
+        //     'shipping_price'   => $shipping,
+
+        //     'payment_method'   => $request->payment_method,
+        //     'payment_status'   => 'pending',
+
+        //     'total'            => $finalTotal,
+        //     'status'           => 'pending',
+        // ]);
         $order = Order::create([
-            'order_number'     => $orderNumber,
-            'name'             => $request->name,
-            'email'            => $request->email,
-            'phone'            => $request->phone,
+            'order_number' => $orderNumber,
+            'name'         => $request->name,
+            'email'        => $request->email,
+            'phone'        => $request->phone,
 
-            'address'          => $request->address ?? null,
-            'city'             => $request->city ?? null,
-            'postal_code'      => $request->postal_code ?? null,
+            // -------------------------------
+            // 🔥 DOSTAWA — różne pola zależnie od metody
+            // -------------------------------
+            'delivery_method' => $request->delivery_method,
+            'delivery_point'  => $request->delivery_method === 'inpost'
+                                ? $request->delivery_point
+                                : null,
 
-            'delivery_method'  => $request->delivery_method,
-            'delivery_point'   => $request->delivery_point ?? null,
-            'shipping_price'   => $shipping,
+            'address'     => $request->delivery_method === 'kurier'
+                                ? $request->address
+                                : null,
+            'city'        => $request->delivery_method === 'kurier'
+                                ? $request->city
+                                : null,
+            'postal_code' => $request->delivery_method === 'kurier'
+                                ? $request->postal_code
+                                : null,
 
-            'payment_method'   => $request->payment_method,
-            'payment_status'   => 'pending',
+            'shipping_price' => $shippingPrice,
 
-            'total'            => $finalTotal,
-            'status'           => 'pending',
+            // -------------------------------
+            // PŁATNOŚĆ
+            // -------------------------------
+            'payment_method' => $request->payment_method,
+            'payment_status' => 'pending',
+
+            // -------------------------------
+            // SUMA
+            // -------------------------------
+            'total' => $finalTotal,
+            'status' => 'pending',
         ]);
+
 
         // Tworzenie pozycji zamówienia
         foreach ($cart as $item) {
