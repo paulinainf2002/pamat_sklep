@@ -117,9 +117,6 @@ Route::get('/checkout', [CheckoutController::class, 'summary'])->name('checkout.
 // Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 
-Route::post('/checkout/update-field', [CheckoutController::class, 'updateField'])
-    ->name('checkout.updateField');
-
     Route::post('/checkout/shipping/point', [CheckoutController::class, 'saveLocker'])
     ->name('checkout.shipping.point');
 
@@ -127,9 +124,11 @@ Route::post('/checkout/update-field', [CheckoutController::class, 'updateField']
 Route::get('/checkout/summary', [CheckoutController::class, 'summary'])
     ->name('checkout.summary');
 
-// Złożenie zamówienia
+    Route::post('/checkout/update-field', [CheckoutController::class, 'updateField'])
+    ->name('checkout.updateField');
+
+Route::post('/checkout/save-locker', [CheckoutController::class, 'saveLocker'])
+    ->name('checkout.shipping.point');
+
 Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])
     ->name('checkout.placeOrder');
-
-    Route::post('/checkout/save-locker', [CheckoutController::class, 'saveLocker'])
-    ->name('checkout.shipping.point');

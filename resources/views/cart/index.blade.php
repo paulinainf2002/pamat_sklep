@@ -322,16 +322,20 @@
     const updateFieldUrl = "{{ route('checkout.updateField') }}";
     const csrfToken = "{{ csrf_token() }}";
 
-    function updateField(field, value) {
-        fetch(updateFieldUrl, {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": csrfToken,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ field, value }),
-        }).catch(() => {});
-    }
+function updateField(field, value) {
+    fetch("{{ route('checkout.updateField') }}", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        body: JSON.stringify({ field, value }),
+    }).catch(() => {
+        console.warn("updateField failed");
+    });
+}
+
 function openLockerWidget() {
     document.getElementById('lockerModal').style.display = "flex";
 }
@@ -350,7 +354,8 @@ function afterPointSelected(point) {
 
     document.getElementById("delivery_point").value = formatted;
 
-    // zapis do sesji
+    updateField('delivery_point', formatted); // ➕ DODAJ TO
+
     fetch("{{ route('checkout.shipping.point') }}", {
         method: "POST",
         headers: {
@@ -366,6 +371,8 @@ function afterPointSelected(point) {
 
     closeLockerWidget();
 }
+
+
 
     function toggleDeliveryExtras() {
         const method = document.querySelector('input[name="delivery_method"]:checked')?.value;

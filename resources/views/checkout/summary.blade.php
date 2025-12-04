@@ -96,11 +96,12 @@
     {{-- ZŁÓŻ ZAMÓWIENIE --}}
     <div style="text-align:right; margin-top:2rem;">
         <form action="{{ route('checkout.placeOrder') }}" method="POST">
-            @csrf
-            <button type="submit" class="checkout-next-btn">
-                Złóż zamówienie →
-            </button>
-        </form>
+    @csrf
+    <button type="submit" class="checkout-next-btn">
+        Złóż zamówienie →
+    </button>
+</form>
+
     </div>
 
 </div>
