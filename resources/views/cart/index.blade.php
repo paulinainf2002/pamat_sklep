@@ -88,7 +88,37 @@
             @csrf
             <button class="btn-clear-all">Wyczyść koszyk</button>
         </form>
+{{-- KOD RABATOWY --}}
+<div class="checkout-box" style="margin-top: 2rem;">
+    <h3>Kod rabatowy</h3>
 
+    <form id="couponForm"
+          action="{{ route('checkout.coupon') }}"
+          method="POST"
+          style="display:flex; gap:10px;">
+        @csrf
+
+        <input
+            type="text"
+            name="coupon"
+            placeholder="np. RABAT10"
+            value="{{ session('coupon_code') }}"
+            style="padding:10px; flex:1;"
+        >
+
+        <button type="submit" class="btn-apply">
+            Zastosuj
+        </button>
+    </form>
+
+    @if (session('success'))
+        <p class="coupon-success">{{ session('success') }}</p>
+    @endif
+
+    @if (session('error'))
+        <p class="coupon-error">{{ session('error') }}</p>
+    @endif
+</div>
         {{-- FORMULARZ CHECKOUTU – WSZYSTKO LECI POSTEM DO /checkout/summary --}}
         <!-- <form action="{{ route('checkout.summary') }}" method="POST" style="margin-top: 3rem;">
             @csrf -->
@@ -273,37 +303,7 @@
 
             </div>
 
-{{-- KOD RABATOWY --}}
-<div class="checkout-box" style="margin-top: 2rem;">
-    <h3>Kod rabatowy</h3>
 
-    <form id="couponForm"
-          action="{{ route('checkout.coupon') }}"
-          method="POST"
-          style="display:flex; gap:10px;">
-        @csrf
-
-        <input
-            type="text"
-            name="coupon"
-            placeholder="np. RABAT10"
-            value="{{ session('coupon_code') }}"
-            style="padding:10px; flex:1;"
-        >
-
-        <button type="submit" class="btn-apply">
-            Zastosuj
-        </button>
-    </form>
-
-    @if (session('success'))
-        <p class="coupon-success">{{ session('success') }}</p>
-    @endif
-
-    @if (session('error'))
-        <p class="coupon-error">{{ session('error') }}</p>
-    @endif
-</div>
 
 
 
