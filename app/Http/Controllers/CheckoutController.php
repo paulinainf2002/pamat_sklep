@@ -53,35 +53,18 @@ public function summary(Request $request)
         ]);
 
         if ($request->delivery_method === 'inpost') {
-
-            $request->validate([
-                'delivery_point' => 'required|string|max:255',
+            session([
+                'inpost_point' => $request->delivery_point,
             ]);
-
-            $shippingPrice = 11.99;
-
-            // baza w cloud nie pozwala na NULL → zamieniamy na pusty string
-            $address    = '';
-            $city       = '';
-            $postalCode = '';
         }
-
 
         if ($request->delivery_method === 'kurier') {
-
-            $request->validate([
-                'address'     => 'required|string|max:255',
-                'city'        => 'required|string|max:255',
-                'postal_code' => 'required|string|max:20',
+            session([
+                'checkout_address'     => $request->address,
+                'checkout_city'        => $request->city,
+                'checkout_postal_code' => $request->postal_code,
             ]);
-
-            $shippingPrice = 14.99;
-
-            $address    = $request->address;
-            $city       = $request->city;
-            $postalCode = $request->postal_code;
         }
-
     }
 
     $cart = session('cart', []);
@@ -109,7 +92,6 @@ public function summary(Request $request)
 }
 
 
-
     /**
      * ----------------------------------------
      * 2) PLACE ORDER — tworzenie zamówienia
@@ -133,38 +115,20 @@ public function summary(Request $request)
             'payment_method'  => 'required|in:p24,transfer',
         ]);
 
-        $address    = '';
-        $city       = '';
-        $postalCode = '';
-
+        // Dodatkowa walidacja
         if ($request->delivery_method === 'inpost') {
-
             $request->validate([
                 'delivery_point' => 'required|string|max:255',
             ]);
-
-            $shippingPrice = 11.99;
-
-            // dla paczkomatu nie potrzebujemy klasycznego adresu
-            $address    = '';
-            $city       = '';
-            $postalCode = '';
         }
 
         if ($request->delivery_method === 'kurier') {
-
             $request->validate([
                 'address'     => 'required|string|max:255',
                 'city'        => 'required|string|max:255',
                 'postal_code' => 'required|string|max:20',
             ]);
-
-            $shippingPrice = 14.99;
-
-            $address    = $request->address;
-            $city       = $request->city;
-            $postalCode = $request->postal_code;
-}
+        }
 
         // Liczenie sum
         $productsTotal = array_sum(array_column($cart, 'price'));
@@ -176,32 +140,30 @@ public function summary(Request $request)
         $finalTotal = $productsTotal + $shipping;
 
 
-
         // Generowanie numeru zamówienia
         $orderNumber = 'PMT-' . now()->format('Y') . '-' . str_pad(Order::count() + 1, 4, '0', STR_PAD_LEFT);
 
         // Tworzenie zamówienia
         $order = Order::create([
-            'order_number'    => $orderNumber,
-            'name'            => $request->name,
-            'email'           => $request->email,
-            'phone'           => $request->phone,
+            'order_number'     => $orderNumber,
+            'name'             => $request->name,
+            'email'            => $request->email,
+            'phone'            => $request->phone,
 
-            'address'         => $address,
-            'city'            => $city,
-            'postal_code'     => $postalCode,
+            'address'          => $request->address ?? null,
+            'city'             => $request->city ?? null,
+            'postal_code'      => $request->postal_code ?? null,
 
-            'delivery_method' => $request->delivery_method,
-            'delivery_point'  => $request->delivery_point ?? '',
-            'shipping_price'  => $shippingPrice,
+            'delivery_method'  => $request->delivery_method,
+            'delivery_point'   => $request->delivery_point ?? null,
+            'shipping_price'   => $shipping,
 
-            'payment_method'  => $request->payment_method,
-            'payment_status'  => 'pending',
+            'payment_method'   => $request->payment_method,
+            'payment_status'   => 'pending',
 
-            'total'           => $finalTotal,
-            'status'          => 'pending',
+            'total'            => $finalTotal,
+            'status'           => 'pending',
         ]);
-
 
         // Tworzenie pozycji zamówienia
         foreach ($cart as $item) {
