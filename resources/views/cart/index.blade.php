@@ -90,8 +90,8 @@
         </form>
 
         {{-- FORMULARZ CHECKOUTU – WSZYSTKO LECI POSTEM DO /checkout/summary --}}
-        <form action="{{ route('checkout.summary') }}" method="POST" style="margin-top: 3rem;">
-            @csrf
+        <!-- <form action="{{ route('checkout.summary') }}" method="POST" style="margin-top: 3rem;">
+            @csrf -->
 
             {{-- DANE KLIENTA --}}
             <hr style="margin: 3rem 0; border-color:#e5e7eb;">
@@ -277,30 +277,34 @@
 <div class="checkout-box" style="margin-top: 2rem;">
     <h3>Kod rabatowy</h3>
 
-    <form action="{{ route('checkout.coupon') }}" method="POST" class="coupon-form">
+    <form id="couponForm"
+          action="{{ route('checkout.coupon') }}"
+          method="POST"
+          style="display:flex; gap:10px;">
         @csrf
 
-        <div class="coupon-row">
-            <input type="text"
-                   name="coupon"
-                   placeholder="np. RABAT10"
-                   value="{{ session('coupon_code') }}">
+        <input
+            type="text"
+            name="coupon"
+            placeholder="np. RABAT10"
+            value="{{ session('coupon_code') }}"
+            style="padding:10px; flex:1;"
+        >
 
-            <button class="btn-apply" type="submit">Zastosuj</button>
-        </div>
-
-        @if (session('coupon'))
-            <p class="coupon-success">
-                Zastosowano kod: <strong>{{ session('coupon_code') }}</strong>
-                ({{ session('coupon') * 100 }}%)
-            </p>
-        @endif
-
-        @if (session('error'))
-            <p class="coupon-error">{{ session('error') }}</p>
-        @endif
+        <button type="submit" class="btn-apply">
+            Zastosuj
+        </button>
     </form>
+
+    @if (session('success'))
+        <p class="coupon-success">{{ session('success') }}</p>
+    @endif
+
+    @if (session('error'))
+        <p class="coupon-error">{{ session('error') }}</p>
+    @endif
 </div>
+
 
 
 
@@ -357,7 +361,6 @@
             </form>
 
 
-        </form>
 
     @endif
 
@@ -439,6 +442,22 @@
     calculateSummary();
 </script> -->
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const couponForm = document.getElementById('couponForm');
+
+    if (couponForm) {
+        couponForm.addEventListener(
+            'submit',
+            function (e) {
+                // Najważniejsze 2 linijki:
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                // Dzięki temu JS od checkoutu nie "porywa" submita
+            },
+            true // <-- ważne! przechwytujemy fazę capture
+        );
+    }
+});
     function openLockerWidget() {
         const modal = document.getElementById('lockerModal');
         if (modal) {
