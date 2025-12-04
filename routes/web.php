@@ -76,7 +76,7 @@ Route::post('/checkout/save-locker', [CheckoutController::class, 'saveLocker'])
     ->name('checkout.shipping.point');
 
 // podsumowanie zamówienia
-Route::match(['GET','POST'], '/checkout/summary', [CheckoutController::class, 'summary'])
+Route::match(['get', 'post'], '/checkout/summary', [CheckoutController::class, 'summary'])
     ->name('checkout.summary');
 
 // składanie zamówienia

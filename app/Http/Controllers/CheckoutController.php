@@ -92,6 +92,7 @@ public function summary(Request $request)
 }
 
 
+
     /**
      * ----------------------------------------
      * 2) PLACE ORDER — tworzenie zamówienia
@@ -138,6 +139,7 @@ public function summary(Request $request)
 
         $shipping = $request->delivery_method === 'inpost' ? 11.99 : 14.99;
         $finalTotal = $productsTotal + $shipping;
+
 
 
         // Generowanie numeru zamówienia

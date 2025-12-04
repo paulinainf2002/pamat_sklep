@@ -273,34 +273,36 @@
 
             </div>
 
-            {{-- KOD RABATOWY --}}
-            <div class="checkout-box" style="margin-top: 2rem;">
-                <h3>Kod rabatowy</h3>
+{{-- KOD RABATOWY --}}
+<div class="checkout-box" style="margin-top: 2rem;">
+    <h3>Kod rabatowy</h3>
 
-                <form action="{{ route('checkout.coupon') }}" method="POST" class="coupon-form">
-                    @csrf
+    <form action="{{ route('checkout.coupon') }}" method="POST" class="coupon-form">
+        @csrf
 
-                    <div class="coupon-row">
-                        <input type="text"
-                            name="coupon"
-                            placeholder="np. RABAT10"
-                            value="{{ session('coupon_code') }}">
+        <div class="coupon-row">
+            <input type="text"
+                   name="coupon"
+                   placeholder="np. RABAT10"
+                   value="{{ session('coupon_code') }}">
 
-                        <button class="btn-apply" type="submit">Zastosuj</button>
-                    </div>
+            <button class="btn-apply" type="submit">Zastosuj</button>
+        </div>
 
-                    @if (session('coupon'))
-                        <p class="coupon-success">
-                            Zastosowano kod: <strong>{{ session('coupon_code') }}</strong>
-                            ({{ session('coupon') * 100 }}%)
-                        </p>
-                    @endif
+        @if (session('coupon'))
+            <p class="coupon-success">
+                Zastosowano kod: <strong>{{ session('coupon_code') }}</strong>
+                ({{ session('coupon') * 100 }}%)
+            </p>
+        @endif
 
-                    @if (session('error'))
-                        <p class="coupon-error">{{ session('error') }}</p>
-                    @endif
-                </form>
-            </div>
+        @if (session('error'))
+            <p class="coupon-error">{{ session('error') }}</p>
+        @endif
+    </form>
+</div>
+
+
 
 
 
@@ -331,12 +333,29 @@
                 </table>
             </div>
 
-            {{-- PRZYCISK DALEJ --}}
-            <div style="text-align:right; margin-top:2rem;">
+            {{-- PRZYCISK DALEJ – FORMULARZ DO PODSUMOWANIA --}}
+            <form id="checkout-summary-form"
+                action="{{ route('checkout.summary') }}"
+                method="POST"
+                style="text-align:right; margin-top:2rem;">
+                @csrf
+
+                {{-- ukryte pola, uzupełniane w JS przy submit --}}
+                <input type="hidden" name="name" id="hidden_name">
+                <input type="hidden" name="email" id="hidden_email">
+                <input type="hidden" name="phone" id="hidden_phone">
+                <input type="hidden" name="delivery_method" id="hidden_delivery_method">
+                <input type="hidden" name="payment_method" id="hidden_payment_method">
+                <input type="hidden" name="delivery_point" id="hidden_delivery_point">
+                <input type="hidden" name="address" id="hidden_address">
+                <input type="hidden" name="postal_code" id="hidden_postal_code">
+                <input type="hidden" name="city" id="hidden_city">
+
                 <button type="submit" class="checkout-next-btn">
                     Przejdź do podsumowania zamówienia →
                 </button>
-            </div>
+            </form>
+
 
         </form>
 
@@ -345,7 +364,7 @@
 </div>
 
 {{-- JS --}}
-<script>
+<!-- <script>
     function openLockerWidget() {
         document.getElementById('lockerModal').style.display = "flex";
     }
@@ -418,6 +437,128 @@
     // INIT
     toggleDeliveryExtras();
     calculateSummary();
+</script> -->
+<script>
+    function openLockerWidget() {
+        const modal = document.getElementById('lockerModal');
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+    }
+
+    function closeLockerWidget() {
+        const modal = document.getElementById('lockerModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Callback z geowidgetu InPost – to zostaje jak było, tylko bez fetchów
+    function afterPointSelected(point) {
+        const formatted =
+            point.name + ' — ' +
+            point.address.line1 + ', ' +
+            point.address.city;
+
+        const input = document.getElementById('delivery_point');
+        if (input) {
+            input.value = formatted;
+        }
+
+        // Resztę przekażemy w formularzu podsumowania
+        closeLockerWidget();
+    }
+
+    function toggleDeliveryExtras() {
+        const methodInput = document.querySelector('input[name="delivery_method"]:checked');
+        const method = methodInput ? methodInput.value : 'inpost';
+
+        const inpostBox  = document.getElementById('inpostFields');
+        const courierBox = document.getElementById('courierFields');
+
+        if (inpostBox && courierBox) {
+            if (method === 'inpost') {
+                inpostBox.style.display  = 'block';
+                courierBox.style.display = 'none';
+            } else {
+                inpostBox.style.display  = 'none';
+                courierBox.style.display = 'block';
+            }
+        }
+    }
+
+    function calculateSummary() {
+        let cartTotal = {{ $total ?? 0 }};
+        let coupon = {{ session('coupon', 0) }};
+
+        const deliveryRadio = document.querySelector('input[name="delivery_method"]:checked');
+        let deliveryMethod = deliveryRadio ? deliveryRadio.value : 'inpost';
+
+        let shipping = 0;
+        if (deliveryMethod === 'inpost') shipping = 11.99;
+        if (deliveryMethod === 'kurier') shipping = 14.99;
+
+        let discount = cartTotal * coupon;
+        let final = cartTotal - discount + shipping;
+
+        const sumProducts = document.getElementById('sumProducts');
+        const sumDiscount = document.getElementById('sumDiscount');
+        const sumShipping = document.getElementById('sumShipping');
+        const sumTotal    = document.getElementById('sumTotal');
+
+        if (sumProducts) sumProducts.innerText = cartTotal.toFixed(2) + ' zł';
+        if (sumDiscount) sumDiscount.innerText = '- ' + discount.toFixed(2) + ' zł';
+        if (sumShipping) sumShipping.innerText = shipping.toFixed(2) + ' zł';
+        if (sumTotal)    sumTotal.innerHTML    = '<strong>' + final.toFixed(2) + ' zł</strong>';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Start
+        toggleDeliveryExtras();
+        calculateSummary();
+
+        // Zmiana metody dostawy → przelicz jeszcze raz
+        document.querySelectorAll('input[name="delivery_method"]').forEach(function (el) {
+            el.addEventListener('change', function () {
+                toggleDeliveryExtras();
+                calculateSummary();
+            });
+        });
+
+        // (płatność na razie nie zmienia ceny, ale to możesz potem rozbudować)
+        document.querySelectorAll('input[name="payment_method"]').forEach(function (el) {
+            el.addEventListener('change', function () {
+                // ewentualnie logika pod dopłatę za pobranie itp.
+            });
+        });
+
+        // Obsługa formularza "Przejdź do podsumowania"
+        const checkoutForm = document.getElementById('checkout-summary-form');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', function () {
+                // Dane klienta
+                document.getElementById('hidden_name').value  = document.getElementById('name').value;
+                document.getElementById('hidden_email').value = document.getElementById('email').value;
+                document.getElementById('hidden_phone').value = document.getElementById('phone').value;
+
+                // Metody dostawy i płatności
+                const delivery = document.querySelector('input[name="delivery_method"]:checked');
+                const payment  = document.querySelector('input[name="payment_method"]:checked');
+
+                document.getElementById('hidden_delivery_method').value = delivery ? delivery.value : 'inpost';
+                document.getElementById('hidden_payment_method').value  = payment ? payment.value : 'p24';
+
+                // Paczkomat
+                const lockerInput = document.getElementById('delivery_point');
+                document.getElementById('hidden_delivery_point').value = lockerInput ? lockerInput.value : '';
+
+                // Adres kuriera
+                document.getElementById('hidden_address').value      = document.getElementById('address').value;
+                document.getElementById('hidden_postal_code').value  = document.getElementById('postal_code').value;
+                document.getElementById('hidden_city').value         = document.getElementById('city').value;
+            });
+        }
+    });
 </script>
 
 @endsection
