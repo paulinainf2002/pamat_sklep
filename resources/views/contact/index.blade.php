@@ -19,6 +19,7 @@
             </p>
 
             <div class="contact-details">
+                <p><strong>Mateusz Piskorek Pamat</strong></p>
                 <p><strong>Email:</strong> <a href="mailto:grpamat@gmail.com">grpamat@gmail.com</a></p>
                 <p><strong>Telefon:</strong> <a href="tel:518300221">518 300 221</a></p>
                 <p><strong>Adres:</strong> ul. Dąbrowskiego 16, 32-651 Nowa Wieś</p>

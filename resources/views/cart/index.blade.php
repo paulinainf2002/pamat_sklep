@@ -337,6 +337,23 @@
                 </table>
             </div>
 
+            {{-- AKCEPTACJA REGULAMINU --}}
+            <div class="terms-box">
+                <label class="terms-label">
+                    <input type="checkbox" id="acceptTerms" />
+                    <span>
+                        Oświadczam, że zapoznałem/am się oraz akceptuję
+                        <a href="{{ route('regulamin') }}" target="_blank" rel="noopener">
+                            regulamin sklepu
+                        </a>
+                    </span>
+                </label>
+
+                <div class="terms-error" id="termsError" style="display:none;">
+                    Aby przejść dalej, musisz zaakceptować regulamin.
+                </div>
+            </div>
+
             {{-- PRZYCISK DALEJ – FORMULARZ DO PODSUMOWANIA --}}
             <form id="checkout-summary-form"
                 action="{{ route('checkout.summary') }}"
@@ -367,80 +384,7 @@
 </div>
 
 {{-- JS --}}
-<!-- <script>
-    function openLockerWidget() {
-        document.getElementById('lockerModal').style.display = "flex";
-    }
 
-    function closeLockerWidget() {
-        document.getElementById('lockerModal').style.display = "none";
-    }
-
-    // Callback gdy użytkownik wybierze paczkomat
-    function afterPointSelected(point) {
-        const formatted =
-            point.name + " — " +
-            point.address.line1 + ", " +
-            point.address.city;
-
-        const input = document.getElementById("delivery_point");
-        if (input) {
-            input.value = formatted;
-        }
-
-        closeLockerWidget();
-    }
-
-    function toggleDeliveryExtras() {
-        const method = document.querySelector('input[name="delivery_method"]:checked')?.value;
-
-        const inpostBox  = document.getElementById('inpostFields');
-        const courierBox = document.getElementById('courierFields');
-
-        if (!method) return;
-
-        if (method === 'inpost') {
-            inpostBox.style.display  = 'block';
-            courierBox.style.display = 'none';
-        } else if (method === 'kurier') {
-            inpostBox.style.display  = 'none';
-            courierBox.style.display = 'block';
-        }
-    }
-
-    function calculateSummary() {
-        let cartTotal = {{ $total ?? 0 }};
-        let coupon = {{ session('coupon', 0) }};
-
-        const deliveryRadio = document.querySelector('input[name="delivery_method"]:checked');
-        let deliveryMethod = deliveryRadio ? deliveryRadio.value : 'inpost';
-
-        let shipping = 0;
-
-        if (deliveryMethod === 'inpost') shipping = 11.99;
-        if (deliveryMethod === 'kurier') shipping = 14.99;
-
-        let discount = cartTotal * coupon;
-        let final = cartTotal - discount + shipping;
-
-        document.getElementById('sumProducts').innerText = cartTotal.toFixed(2) + " zł";
-        document.getElementById('sumDiscount').innerText = "- " + discount.toFixed(2) + " zł";
-        document.getElementById('sumShipping').innerText = shipping.toFixed(2) + " zł";
-        document.getElementById('sumTotal').innerHTML = "<strong>" + final.toFixed(2) + " zł</strong>";
-    }
-
-    // LISTENERY — dostawa
-    document.querySelectorAll('input[name="delivery_method"]').forEach(el => {
-        el.addEventListener('change', () => {
-            toggleDeliveryExtras();
-            calculateSummary();
-        });
-    });
-
-    // INIT
-    toggleDeliveryExtras();
-    calculateSummary();
-</script> -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     const couponForm = document.getElementById('couponForm');
@@ -472,29 +416,14 @@
         }
     }
 
-    // Callback z geowidgetu InPost – to zostaje jak było, tylko bez fetchów
-    // function afterPointSelected(point) {
-    //     const formatted =
-    //         point.name + ' — ' +
-    //         point.address.line1;
-
-    //     const input = document.getElementById('delivery_point');
-    //     if (input) {
-    //         input.value = formatted;
-    //     }
-
-
-    //     closeLockerWidget();
-    // }
     function afterPointSelected(point) {
     const formatted =
         point.name + " — " +
         point.address.line1;
 
-    // pokaż w polu
+
     document.getElementById('delivery_point').value = formatted;
 
-    // zapisz do ukrytego pola, które pójdzie do SUMMARY POSTEM
     const hidden = document.getElementById('hidden_delivery_point');
     if (hidden) hidden.value = formatted;
 
@@ -597,6 +526,28 @@
             });
         }
     });
+    // === WALIDACJA AKCEPTACJI REGULAMINU ===
+document.addEventListener('DOMContentLoaded', function () {
+    const checkoutForm = document.getElementById('checkout-summary-form');
+    const acceptTerms = document.getElementById('acceptTerms');
+    const termsError = document.getElementById('termsError');
+
+    if (checkoutForm && acceptTerms) {
+        checkoutForm.addEventListener('submit', function (e) {
+            if (!acceptTerms.checked) {
+                e.preventDefault();
+                if (termsError) termsError.style.display = 'block';
+
+                // delikatne przewinięcie do checkboxa
+                acceptTerms.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                acceptTerms.focus();
+            } else {
+                if (termsError) termsError.style.display = 'none';
+            }
+        });
+    }
+});
+
 </script>
 
 @endsection

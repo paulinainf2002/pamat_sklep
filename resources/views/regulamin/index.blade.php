@@ -17,8 +17,13 @@
 
         <h2>1. Informacje ogólne</h2>
         <p>
-            1. Sklep internetowy PaMat działa pod adresem <strong>pamat.pl</strong>
-            i prowadzony jest przez PaMat, ul. Dąbrowskiego 16, 32-651 Nowa Wieś.
+            1. Sklep internetowy PaMat działa pod adresem <strong>pamat.shop</strong>
+            i prowadzony jest przez Mateusz Piskorek Pamat
+        <ul>
+            <li>ul. Dąbrowskiego 16, 32-651 Nowa Wieś</li>
+            <li>NIP: 5492460915</li>
+            <li>REGON: 387591024<</li>
+        </ul>
         </p>
         <p>
             2. Kontakt ze sklepem możliwy jest przez:
@@ -49,6 +54,7 @@
 
         <h2>5. Dostawa</h2>
         <ul>
+            <li>Wysyłka produktów następuje do 2 dni roboczych od daty zaksięgowania wpłaty na konto bankowe</li>
             <li>Produkty wysyłane są na adres podany przez Kupującego.</li>
             <li>Termin dostawy wynosi zwykle 1–3 dni robocze.</li>
             <li>Wysyłka realizowana jest przez firmy kurierskie.</li>

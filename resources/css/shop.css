@@ -2661,3 +2661,44 @@ body::after {
     background-color: #586b30;
 }
 
+/* === CHECKBOX: AKCEPTACJA REGULAMINU === */
+.terms-box {
+    margin-top: 2rem;
+    padding: 1rem 1.2rem;
+    /* background: #F3F4ED; */
+    border: 1px solid #E2E4D8;
+    border-radius: 12px;
+}
+
+.terms-label {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.95rem;
+    color: #2f3e15;
+    user-select: none;
+}
+
+.terms-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3E4E20;
+    cursor: pointer;
+}
+
+.terms-label a {
+    color: #3E4E20;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.terms-label a:hover {
+    opacity: 0.85;
+}
+
+.terms-error {
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #C62828;
+}

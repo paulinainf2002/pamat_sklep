@@ -17,8 +17,12 @@
 
         <h2>1. Administrator danych</h2>
         <p>
-            Administratorem Twoich danych osobowych jest <strong>PaMat</strong>,
-            ul. Dąbrowskiego 16, 32-651 Nowa Wieś.
+            Administratorem Twoich danych osobowych jest <strong>Mateusz Piskorek Pamat</strong>,
+            prowadzący działalność gospodarczą pod firmą PaMat, z siedzibą przy:
+            ul. Dąbrowskiego 16, 32-651 Nowa Wieś</br>
+            NIP: 5492460915</br>
+            REGON: 387591024</br>
+            E-mail: grpamat@gmail.com</br>
         </p>
 
         <h2>2. Jakie dane zbieramy?</h2>
