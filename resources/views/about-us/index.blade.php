@@ -19,9 +19,11 @@
             </p>
 
             <p>
-                Jesteśmy rodzinną marką tworzoną z pasji do natury, designu i wyjątkowych smaków.
-                Wybieramy tylko najlepsze składniki, współpracując z zaufanymi dostawcami
-                i dbając o każdy etap produkcji — od ziaren i liści, po opakowanie.
+               Jako firma chcemy wyróżnić się prostotą i szczerością przekazu.
+               Nie udajemy luksusu, stawiamy na naturalność, uczciwe podejście i lokalne wartości.
+               Pragniemy również stworzyć wokół siebie społeczność osób, które wierzą, że
+               w prostych chwilach można odnaleźć spokój, przyjemność i prawdziwe znaczenie jakości.
+
             </p>
 
             <p>
