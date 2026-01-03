@@ -14,7 +14,7 @@
     @if(empty($cart))
 
         <div class="empty-cart">
-            <img src="{{ asset('images/cart-big.svg') }}" alt="" class="empty-cart-img">
+            <img src="{{ asset('images/cart-big.svg') }}" alt="pusty koszyk" class="empty-cart-img">
 
             <h2>Twój koszyk jest pusty</h2>
 
@@ -49,7 +49,7 @@
                 <div class="cart-item">
 
                     <div class="cart-thumb">
-                        <img src="{{ Storage::url($item['image']) }}" alt="">
+                        <img src="{{ Storage::url($item['image']) }}" alt="produkt">
                     </div>
 
                     <div class="cart-info">
@@ -329,6 +329,7 @@
                         <td>Dostawa:</td>
                         <td id="sumShipping">0 zł</td>
                     </tr>
+
 
                     <tr class="summary-total-row">
                         <td><strong>Razem do zapłaty:</strong></td>

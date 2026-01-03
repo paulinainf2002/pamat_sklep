@@ -249,7 +249,7 @@ document.addEventListener("change", function (e) {
 
     <div id="pm-toast-modal" class="pm-toast-modal">
         <div class="pm-toast-content">
-            <img src="{{ Storage::url(session('added_product')['image']) }}" class="pm-toast-img" alt="">
+            <img src="{{ Storage::url(session('added_product')['image']) }}" class="pm-toast-img" alt="zdjecie">
             <div>
                 <h3>Dodano do koszyka!</h3>
                 <p>{{ session('added_product')['name'] }}</p>

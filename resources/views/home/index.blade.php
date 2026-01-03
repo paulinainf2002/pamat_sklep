@@ -51,7 +51,7 @@
                     <a href="{{ route('products.show', $product->id) }}">
                         <div class="carousel-card">
                             @if($product->image)
-                                <img src="{{ Storage::url($product->image) }}">
+                                <img src="{{ Storage::url($product->image) }}" alt="zdjecie">
                             @endif
                             <h3>{{ $product->name }}</h3>
                             <p>{{ number_format($product->price, 2) }} zł</p>
@@ -80,7 +80,7 @@
                     <a href="{{ route('products.show', $product->id) }}">
                         <div class="carousel-card">
                             @if($product->image)
-                                <img src="{{ Storage::url($product->image) }}">
+                                <img src="{{ Storage::url($product->image) }}" alt="zdjecie">
                             @endif
                             <h3>{{ $product->name }}</h3>
                             <p>
