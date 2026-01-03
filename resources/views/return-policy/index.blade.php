@@ -31,7 +31,7 @@
         <h2>3. Jak zgłosić zwrot?</h2>
         <p>Aby zgłosić zwrot, skontaktuj się z nami:</p>
 
-        <ul>
+        <ul class="custom-list">
             <li>Email: <a href="mailto:grpamat@gmail.com">grpamat@gmail.com</a></li>
             <li>Telefon: 518 300 221</li>
         </ul>
@@ -40,7 +40,7 @@
             W wiadomości podaj:
         </p>
 
-        <ul>
+        <ul class="custom-list">
             <li>numer zamówienia,</li>
             <li>produkty, które chcesz zwrócić,</li>
             <li>powód zwrotu (opcjonalnie).</li>

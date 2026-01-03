@@ -28,7 +28,7 @@
         <h2>2. Jakie dane zbieramy?</h2>
         <p>Zbieramy wyłącznie dane niezbędne do:</p>
 
-        <ul>
+        <ul class="custom-list">
             <li>realizacji zamówień,</li>
             <li>obsługi kontaktu mailowego i telefonicznego,</li>
             <li>wysłania informacji handlowych (jeśli wyrazisz zgodę),</li>
@@ -43,7 +43,7 @@
         <h2>3. Cele przetwarzania danych</h2>
         <p>Twoje dane przetwarzamy w celach:</p>
 
-        <ul>
+        <ul class="custom-list">
             <li>zawarcia i realizacji umowy kupna-sprzedaży,</li>
             <li>wystawienia faktury lub paragonu,</li>
             <li>odpowiedzi na pytania przesłane przez formularz kontaktowy,</li>
@@ -54,7 +54,7 @@
         <h2>4. Odbiorcy danych</h2>
         <p>Twoje dane mogą być powierzane:</p>
 
-        <ul>
+        <ul class="custom-list">
             <li>firmom kurierskim i transportowym,</li>
             <li>dostawcom usług płatniczych,</li>
             <li>biurze rachunkowemu,</li>
@@ -70,7 +70,7 @@
         <h2>6. Twoje prawa</h2>
         <p>Masz prawo do:</p>
 
-        <ul>
+        <ul class="custom-list">
             <li>dostępu do swoich danych,</li>
             <li>sprostowania ich,</li>
             <li>usunięcia ("prawo do bycia zapomnianym"),</li>

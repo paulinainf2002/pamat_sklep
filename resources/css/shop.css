@@ -2702,3 +2702,44 @@ body::after {
     font-weight: 600;
     color: #C62828;
 }
+/* .custom-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+    width: 10px;
+    height: 10px;
+    background-image: url('/images/list-icon.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+} */
+/* === CUSTOM LIST (Pewny styl) === */
+.custom-list {
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin: 0;
+}
+
+.custom-list li {
+    position: relative;
+    padding-left: 1.7rem;
+    margin-bottom: 0.65rem;
+    line-height: 1.55;
+}
+
+.custom-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+
+    width: 14px;
+    height: 14px;
+
+    background-image: url("/images/li-icon.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+

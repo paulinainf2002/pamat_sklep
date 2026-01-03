@@ -19,7 +19,7 @@
         <p>
             1. Sklep internetowy PaMat działa pod adresem <strong>pamat.shop</strong>
             i prowadzony jest przez Mateusz Piskorek Pamat
-        <ul>
+        <ul class="custom-list">
             <li>ul. Dąbrowskiego 16, 32-651 Nowa Wieś</li>
             <li>NIP: 5492460915</li>
             <li>REGON: 387591024<</li>
@@ -28,7 +28,7 @@
         <p>
             2. Kontakt ze sklepem możliwy jest przez:
         </p>
-        <ul>
+        <ul class="custom-list">
             <li>Email: <a href="mailto:grpamat@gmail.com">grpamat@gmail.com</a></li>
             <li>Telefon: 518 300 221</li>
         </ul>
@@ -39,21 +39,21 @@
         <p><strong>Produkt</strong> – towary dostępne w sklepie, głównie kawa, herbata i zestawy.</p>
 
         <h2>3. Składanie zamówień</h2>
-        <ul>
+        <ul class="custom-list">
             <li>Zamówienia można składać 24/7.</li>
             <li>Złożenie zamówienia oznacza zawarcie umowy sprzedaży.</li>
             <li>Kupujący jest zobowiązany do podania prawdziwych danych.</li>
         </ul>
 
         <h2>4. Ceny i płatności</h2>
-        <ul>
+        <ul class="custom-list">
             <li>Wszystkie ceny podane są w złotówkach i zawierają podatek VAT.</li>
             <li>Płatność możliwa jest m.in. przez przelew lub systemy płatności elektronicznych.</li>
             <li>Cena podana przy produkcie w momencie zakupu jest wiążąca.</li>
         </ul>
 
         <h2>5. Dostawa</h2>
-        <ul>
+        <ul class="custom-list">
             <li>Wysyłka produktów następuje do 2 dni roboczych od daty zaksięgowania wpłaty na konto bankowe</li>
             <li>Produkty wysyłane są na adres podany przez Kupującego.</li>
             <li>Termin dostawy wynosi zwykle 1–3 dni robocze.</li>
@@ -76,7 +76,7 @@
         </p>
 
         <h2>8. Postanowienia końcowe</h2>
-        <ul>
+        <ul class="custom-list">
             <li>Regulamin może ulec zmianie — aktualna wersja publikowana jest na stronie.</li>
             <li>W sprawach nieuregulowanych obowiązuje prawo polskie.</li>
             <li>Akceptacja regulaminu jest wymagana przy składaniu zamówienia.</li>
