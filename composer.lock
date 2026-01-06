@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58ca2168af66df9086126518d04d642c",
+    "content-hash": "d085e3c28d7a32ab7d3a27433a045907",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -4452,6 +4452,46 @@
                 }
             ],
             "time": "2025-08-21T11:53:16+00:00"
+        },
+        {
+            "name": "piatkowski/przelewy24-php",
+            "version": "0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/piatkowski/przelewy24-php.git",
+                "reference": "fdb726c90b2de609b24008246914be3b44c50931"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/piatkowski/przelewy24-php/zipball/fdb726c90b2de609b24008246914be3b44c50931",
+                "reference": "fdb726c90b2de609b24008246914be3b44c50931",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Przelewy24\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Krzysztof Piątkowski",
+                    "homepage": "https://github.com/piatkowski"
+                }
+            ],
+            "description": "Simple class to use P24 REST API",
+            "support": {
+                "issues": "https://github.com/piatkowski/przelewy24-php/issues",
+                "source": "https://github.com/piatkowski/przelewy24-php/tree/0.0.1"
+            },
+            "time": "2023-01-19T10:34:11+00:00"
         },
         {
             "name": "pragmarx/google2fa",

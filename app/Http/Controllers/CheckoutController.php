@@ -214,15 +214,29 @@ public function summary(Request $request)
             ]);
         }
 
-        // Wyczyść koszyk
-        session()->forget('cart');
+        // // Wyczyść koszyk
+        // session()->forget('cart');
 
+        // // Redirect płatności
+        // if ($request->payment_method === 'p24') {
+        //     return redirect()->route('p24.redirect', ['order' => $order->id]);
+        // }
+
+        // return redirect()->route('checkout.success', ['order' => $order->order_number]);
         // Redirect płatności
-        if ($request->payment_method === 'p24') {
-            return redirect()->route('p24.redirect', ['order' => $order->id]);
-        }
+    if ($request->payment_method === 'p24') {
+        // NIE czyścimy koszyka tutaj – bo płatność może się nie udać
+        // Koszyk czyścimy dopiero po potwierdzeniu (return, gdy status jest paid)
+        return redirect()->route('p24.pay', ['order' => $order->id]);
+    }
 
-        return redirect()->route('checkout.success', ['order' => $order->order_number]);
+    // dla przelewu tradycyjnego możemy czyścić od razu
+    session()->forget('cart');
+    session()->forget('coupon');
+    session()->forget('coupon_code');
+
+    return redirect()->route('checkout.success', ['order' => $order->order_number]);
+
     }
 
     /**

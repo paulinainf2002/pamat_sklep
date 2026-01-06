@@ -113,3 +113,11 @@ Route::get('/regulamin', fn() => view('regulamin.index'))->name('regulamin');
 Route::post('/accept-cookies', function () {
     return back()->cookie('cookies_accepted', true, 525600);
 })->name('cookies.accept');
+
+
+use App\Http\Controllers\P24Controller;
+
+Route::get('/p24/pay/{order}', [P24Controller::class, 'pay'])->name('p24.pay');
+Route::post('/p24/status/{orderNumber}', [P24Controller::class, 'status'])->name('p24.status'); // notify
+Route::get('/p24/return/{orderNumber}', [P24Controller::class, 'return'])->name('p24.return');  // return
+

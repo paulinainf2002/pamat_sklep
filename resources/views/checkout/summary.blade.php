@@ -165,6 +165,7 @@ $delivery_point = old('delivery_point', request('delivery_point'));
 
         {{-- Płatność --}}
         <input type="hidden" name="payment_method" value="{{ session('checkout_payment_method') }}">
+        <input type="hidden" name="final_amount" value="{{ $final }}">
 
         <button type="submit" class="summary-submit-btn">
             Złóż zamówienie →
