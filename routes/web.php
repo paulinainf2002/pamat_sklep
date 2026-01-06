@@ -117,7 +117,8 @@ Route::post('/accept-cookies', function () {
 
 use App\Http\Controllers\P24Controller;
 
-Route::get('/p24/pay/{order}', [P24Controller::class, 'pay'])->name('p24.pay');
-Route::post('/p24/status/{orderNumber}', [P24Controller::class, 'status'])->name('p24.status'); // notify
-Route::get('/p24/return/{orderNumber}', [P24Controller::class, 'return'])->name('p24.return');  // return
+Route::get('/p24/pay/{order}', [P24Controller::class, 'redirect'])->name('p24.redirect');
+Route::get('/p24/return/{orderNumber}', [P24Controller::class, 'return'])->name('p24.return');
+Route::post('/p24/status/{orderNumber}', [P24Controller::class, 'status'])->name('p24.status');
+
 

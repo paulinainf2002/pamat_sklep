@@ -4,93 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Przelewy24\Przelewy24;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class P24Controller extends Controller
 {
-    private function client(): Przelewy24
+    public function redirect($orderId)
     {
-        return new Przelewy24([
-            'merchantId' => (int) env('P24_MERCHANT_ID'),
-            'posId'      => (int) env('P24_POS_ID'),
-            'crc'        => env('P24_CRC'),
-            'reportKey'  => env('P24_REPORT_KEY'), // klucz API
-            'sandbox'    => (bool) env('P24_SANDBOX', false),
-        ]);
-    }
+        $order = Order::findOrFail($orderId);
 
-    /**
-     * Start płatności – rejestracja transakcji i redirect do P24
-     * sessionId ustawiamy jako order_number → łatwo później znaleźć zamówienie
-     */
-    public function pay(Order $order)
-    {
-        // kwota w groszach (int)
-        $amount = (int) round(((float) $order->total) * 100);
+        // ====== DANE P24 (TYLKO STĄD) ======
+        $merchantId = (int) config('services.p24.merchant_id'); // 370681
+        $posId      = (int) config('services.p24.pos_id');      // 6440827
+        $apiKey     = trim(config('services.p24.api_key'));     // KLUCZ API
+        $crc        = trim(config('services.p24.crc'));         // CRC
 
-        // sessionId w P24 – dajemy order_number
-        $sessionId = $order->order_number;
+        // ====== KWOTA W GROSZACH ======
+        $amount = (int) round($order->total * 100);
 
-        $transaction = $this->client()->transaction([
-            'sessionId'   => $sessionId,
-            'amount'      => $amount,
-            'currency'    => 'PLN',
-            'description' => 'Zamówienie PaMat ' . $order->order_number,
-            'email'       => $order->email,
-            'country'     => 'PL',
-            'language'    => 'pl',
+        // ====== SIGN ======
+        $sign = hash(
+            'sha384',
+            json_encode([
+                'sessionId'  => $order->order_number,
+                'merchantId' => $merchantId,
+                'amount'     => $amount,
+                'currency'   => 'PLN',
+                'crc'        => $crc,
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        );
 
-            // Return i Status z numerem zamówienia w URL
-            'urlReturn'   => route('p24.return', ['orderNumber' => $order->order_number]),
-            'urlStatus'   => route('p24.status', ['orderNumber' => $order->order_number]),
-        ]);
+        // ====== REQUEST ======
+        $response = Http::withBasicAuth($merchantId, $apiKey)
+            ->post('https://secure.przelewy24.pl/api/v1/transaction/register', [
+                'merchantId' => $merchantId,
+                'posId'      => $posId,
+                'sessionId'  => $order->order_number,
+                'amount'     => $amount,
+                'currency'   => 'PLN',
+                'description'=> 'Zamówienie PaMat ' . $order->order_number,
+                'email'      => $order->email,
+                'country'    => 'PL',
+                'language'   => 'pl',
+                'urlReturn'  => route('p24.return', $order->order_number),
+                'urlStatus'  => route('p24.status', $order->order_number),
+                'sign'       => $sign,
+            ]);
 
-        return redirect()->away($transaction->getRedirectUrl());
-    }
+        if (! $response->successful()) {
+            Log::error('P24 ERROR', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
 
-    /**
-     * NOTIFY (urlStatus) – P24 woła serwer->serwer, tu robimy verify i oznaczamy zamówienie jako opłacone
-     */
-    public function status(Request $request, string $orderNumber)
-    {
-        $order = Order::where('order_number', $orderNumber)->firstOrFail();
-        $client = $this->client();
-
-        // biblioteka pobiera body notyfikacji
-        $notification = $client->receiveNotification();
-
-        // amount musi być spójny (grosze)
-        $amount = (int) round(((float) $order->total) * 100);
-        $notification->setAmount($amount);
-
-        $response = $client->verify($notification);
-
-        if ($response->getStatus() >= 200 && $response->getStatus() < 300) {
-            $order->payment_status = 'paid';
-            $order->status = 'paid';
-            $order->save();
-
-            return response('OK', 200);
+            abort(500, 'Błąd połączenia z Przelewy24');
         }
 
-        return response('VERIFY_FAILED', 400);
+        return redirect($response->json()['data']['redirectUrl']);
     }
 
-    /**
-     * RETURN – user wraca po płatności
-     * UWAGA: return nie jest źródłem prawdy, ale tu czyścimy koszyk w sesji jeśli zamówienie jest opłacone
-     */
-    public function return(Request $request, string $orderNumber)
+    public function return($orderNumber)
     {
-        $order = Order::where('order_number', $orderNumber)->firstOrFail();
+        return redirect()->route('checkout.success', $orderNumber);
+    }
 
-        // jeśli opłacone → czyścimy koszyk w SESJI użytkownika (tu to ma sens)
-        if ($order->payment_status === 'paid') {
-            session()->forget('cart');
-            session()->forget('coupon');
-            session()->forget('coupon_code');
-        }
-
-        return view('checkout.success', compact('order'));
+    public function status(Request $request, $orderNumber)
+    {
+        // webhook – na razie nie ruszamy
+        return response()->json(['status' => 'OK']);
     }
 }
