@@ -227,7 +227,7 @@ public function summary(Request $request)
     if ($request->payment_method === 'p24') {
         // NIE czyścimy koszyka tutaj – bo płatność może się nie udać
         // Koszyk czyścimy dopiero po potwierdzeniu (return, gdy status jest paid)
-        return redirect()->route('p24.pay', ['order' => $order->id]);
+        return redirect()->route('p24.redirect', ['order' => $order->id]);
     }
 
     // dla przelewu tradycyjnego możemy czyścić od razu

@@ -122,3 +122,4 @@ Route::get('/p24/return/{orderNumber}', [P24Controller::class, 'return'])->name(
 Route::post('/p24/status/{orderNumber}', [P24Controller::class, 'status'])->name('p24.status');
 
 
+
