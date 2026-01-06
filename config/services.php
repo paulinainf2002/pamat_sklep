@@ -41,7 +41,4 @@ return [
         'api_key'     => env('P24_API_KEY'),
         'crc'         => env('P24_CRC'),
     ],
-
-
-
 ];

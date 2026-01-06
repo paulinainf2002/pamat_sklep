@@ -14,27 +14,27 @@ class P24Controller extends Controller
         $order = Order::findOrFail($orderId);
 
         // ====== DANE P24 ======
-        $merchantId = (int) config('services.p24.merchant_id'); // np. 370681 (ID konta)
-        $posId      = (int) config('services.p24.pos_id');      // np. 6440827 (User do REST)
-        $apiKey     = trim((string) config('services.p24.api_key')); // REST API key (secretId)
-        $crc        = trim((string) config('services.p24.crc'));     // CRC
+        $merchantId = (int) config('services.p24.merchant_id'); // 370681
+        $posId      = (int) config('services.p24.pos_id');      // 370681
+        $apiKey     = trim((string) config('services.p24.api_key'));
+        $crc        = trim((string) config('services.p24.crc'));
 
-        if (!$merchantId || !$posId || !$apiKey || !$crc) {
+        if (!$merchantId || !$posId || $apiKey === '' || $crc === '') {
             Log::error('P24 CONFIG ERROR', [
                 'merchantId' => $merchantId,
                 'posId'      => $posId,
                 'apiKey_len' => strlen($apiKey),
                 'crc_len'    => strlen($crc),
             ]);
-            abort(500, 'Brak konfiguracji Przelewy24 (merchantId/posId/apiKey/crc).');
+            abort(500, 'Błąd konfiguracji P24 (brak danych w ENV).');
         }
 
         // ====== KWOTA W GROSZACH ======
-        $amount = (int) round(((float) $order->total) * 100);
+        $amount = (int) round($order->total * 100);
 
-        // ====== SIGN (SHA384 z JSON) ======
-        $signPayload = [
-            'sessionId'  => (string) $order->order_number,
+        // ====== SIGN ======
+        $payloadForSign = [
+            'sessionId'  => $order->order_number,
             'merchantId' => $merchantId,
             'amount'     => $amount,
             'currency'   => 'PLN',
@@ -43,37 +43,36 @@ class P24Controller extends Controller
 
         $sign = hash(
             'sha384',
-            json_encode($signPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            json_encode($payloadForSign, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
-        // DEBUG (bez sekretów)
+        // ====== DEBUG ======
         Log::info('P24 AUTH DEBUG', [
-            'basic_auth_login' => $posId,         // <-- TO MUSI BYĆ posId
-            'merchantId'       => $merchantId,
-            'posId'            => $posId,
-            'apiKey_len'       => strlen($apiKey),
-            'amount'           => $amount,
-            'sessionId'        => $order->order_number,
+            'basic_auth_login_should_be_posId' => $posId,
+            'merchantId' => $merchantId,
+            'posId'      => $posId,
+            'apiKey_len' => strlen($apiKey),
+            'amount'     => $amount,
+            'sessionId'  => $order->order_number,
         ]);
 
         // ====== REQUEST ======
-        // BasicAuth: login = posId, password = apiKey/secretId  :contentReference[oaicite:1]{index=1}
-        $response = Http::withBasicAuth($posId, $apiKey)
+        // !!! Najważniejsze: BasicAuth = POS_ID + API_KEY (nie merchantId)
+        $response = Http::withBasicAuth((string) $posId, $apiKey)
             ->acceptJson()
-            ->asJson()
             ->post('https://secure.przelewy24.pl/api/v1/transaction/register', [
-                'merchantId'  => $merchantId,
-                'posId'       => $posId,
-                'sessionId'   => (string) $order->order_number,
-                'amount'      => $amount,
-                'currency'    => 'PLN',
-                'description' => 'Zamówienie PaMat ' . $order->order_number,
-                'email'       => (string) $order->email,
-                'country'     => 'PL',
-                'language'    => 'pl',
-                'urlReturn'   => route('p24.return', $order->order_number),
-                'urlStatus'   => route('p24.status', $order->order_number),
-                'sign'        => $sign,
+                'merchantId' => $merchantId,
+                'posId'      => $posId,
+                'sessionId'  => $order->order_number,
+                'amount'     => $amount,
+                'currency'   => 'PLN',
+                'description'=> 'Zamówienie PaMat ' . $order->order_number,
+                'email'      => $order->email,
+                'country'    => 'PL',
+                'language'   => 'pl',
+                'urlReturn'  => route('p24.return', $order->order_number),
+                'urlStatus'  => route('p24.status', $order->order_number),
+                'sign'       => $sign,
             ]);
 
         if (! $response->successful()) {
@@ -89,12 +88,12 @@ class P24Controller extends Controller
 
         $json = $response->json();
 
-        // zwykle: data.redirectUrl
+        // P24 czasem zwraca struktury różnie; zabezpieczmy się
         $redirectUrl = $json['data']['redirectUrl'] ?? null;
 
         if (! $redirectUrl) {
-            Log::error('P24 ERROR - missing redirectUrl', ['json' => $json]);
-            abort(500, 'P24 nie zwróciło adresu przekierowania.');
+            Log::error('P24 RESPONSE ERROR', ['json' => $json]);
+            abort(500, 'Błędna odpowiedź z Przelewy24 (brak redirectUrl).');
         }
 
         return redirect($redirectUrl);
@@ -107,7 +106,7 @@ class P24Controller extends Controller
 
     public function status(Request $request, $orderNumber)
     {
-        // webhook/status – ogarniemy później, na razie OK
+        // webhook – na razie zostawiamy
         return response()->json(['status' => 'OK']);
     }
 }
