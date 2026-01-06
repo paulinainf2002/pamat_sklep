@@ -41,7 +41,7 @@ class P24Controller extends Controller
         ]);
 
         // ====== REQUEST ======
-        $response = Http::withBasicAuth($posId, $apiKey)
+        $response = Http::withBasicAuth($merchantId, $apiKey)
             ->post('https://secure.przelewy24.pl/api/v1/transaction/register', [
                 'merchantId' => $merchantId,
                 'posId'      => $posId,
